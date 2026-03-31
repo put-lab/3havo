@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Elementsymbolen Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0f13;
+    --card: #1a1a24;
+    --accent: #c8f045;
+    --accent2: #7c5cfc;
+    --text: #f0f0f0;
+    --muted: #888;
+    --correct: #3ddc84;
+    --wrong: #ff5c5c;
+    --border: #2a2a38;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Syne', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 40px;
+  }
+
+  header {
+    width: 100%;
+    max-width: 640px;
+    margin-bottom: 28px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+  }
+
+  h1 span { color: var(--accent); }
+
+  .mode-btns {
+    display: flex;
+    gap: 8px;
+  }
+
+  .mode-btn {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    color: var(--muted);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .mode-btn.active {
+    background: var(--accent);
+    color: #0f0f13;
+    border-color: var(--accent);
+  }
+
+  /* ── Progress bar ── */
+  .progress-wrap {
+    width: 100%;
+    max-width: 640px;
+    margin-bottom: 20px;
+  }
+
+  .progress-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 6px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .progress-bar {
+    height: 4px;
+    background: var(--border);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 2px;
+    transition: width 0.4s ease;
+  }
+
+  /* ── Flashcard ── */
+  .card-scene {
+    width: 100%;
+    max-width: 640px;
+    perspective: 1000px;
+    margin-bottom: 20px;
+  }
+
+  .card {
+    width: 100%;
+    height: 200px;
+    position: relative;
+    transform-style: preserve-3d;
+    transition: transform 0.5s cubic-bezier(.4,0,.2,1);
+    cursor: pointer;
+  }
+
+  .card.flipped { transform: rotateY(180deg); }
+
+  .card-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1.5px solid var(--border);
+  }
+
+  .card-front {
+    background: var(--card);
+  }
+
+  .card-back {
+    background: #1e1e2e;
+    transform: rotateY(180deg);
+  }
+
+  .card-label {
+    font-size: 0.7rem;
+    font-family: 'DM Mono', monospace;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 14px;
+  }
+
+  .card-symbol {
+    font-size: 5rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .card-name {
+    font-size: 2.2rem;
+    font-weight: 700;
+    margin-top: 8px;
+  }
+
+  .card-hint {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 8px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  /* ── Multiple choice ── */
+  .choices {
+    width: 100%;
+    max-width: 640px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  .choice-btn {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    padding: 18px 12px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+
+  .choice-btn:hover:not(:disabled) {
+    border-color: var(--accent2);
+    background: #1e1a30;
+  }
+
+  .choice-btn.correct {
+    background: #0d2e1a;
+    border-color: var(--correct);
+    color: var(--correct);
+  }
+
+  .choice-btn.wrong {
+    background: #2e0d0d;
+    border-color: var(--wrong);
+    color: var(--wrong);
+  }
+
+  .choice-btn:disabled { cursor: default; }
+
+  /* ── Feedback ── */
+  .feedback {
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: transparent;
+    transition: color 0.2s;
+  }
+
+  .feedback.correct { color: var(--correct); }
+  .feedback.wrong { color: var(--wrong); }
+
+  /* ── Nav ── */
+  .nav {
+    width: 100%;
+    max-width: 640px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 4px;
+  }
+
+  .nav-btn {
+    background: var(--card);
+    border: 1.5px solid var(--border);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+    padding: 10px 22px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+
+  .nav-btn:hover { border-color: var(--accent); color: var(--accent); }
+  .nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+  .shuffle-btn {
+    font-size: 1.1rem;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    color: var(--muted);
+    padding: 8px;
+    transition: color 0.15s;
+  }
+
+  .shuffle-btn:hover { color: var(--accent); }
+
+  /* ── Score screen ── */
+  .score-screen {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    width: 100%;
+    max-width: 640px;
+    text-align: center;
+    margin-top: 20px;
+  }
+
+  .score-screen.visible { display: flex; }
+
+  .score-num {
+    font-size: 5rem;
+    font-weight: 800;
+    color: var(--accent);
+    line-height: 1;
+  }
+
+  .score-label { font-size: 1rem; color: var(--muted); }
+
+  .restart-btn {
+    background: var(--accent);
+    color: #0f0f13;
+    font-family: 'Syne', sans-serif;
+    font-size: 1rem;
+    font-weight: 800;
+    padding: 14px 36px;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    margin-top: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .quiz-area { width: 100%; max-width: 640px; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Elementen<span>symbolen</span></h1>
+  <div class="mode-btns">
+    <button class="mode-btn active" onclick="setMode('flash')">Flashcard</button>
+    <button class="mode-btn" onclick="setMode('mc')">Quiz</button>
+  </div>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-info">
+    <span id="prog-text">1 / 30</span>
+    <span id="score-text">Score: 0</span>
+  </div>
+  <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:3.3%"></div></div>
+</div>
+
+<div class="quiz-area" id="quiz-area">
+  <!-- Flashcard mode -->
+  <div id="flash-mode">
+    <div class="card-scene">
+      <div class="card" id="card" onclick="flipCard()">
+        <div class="card-face card-front">
+          <div class="card-label">symbool</div>
+          <div class="card-symbol" id="card-symbol">Al</div>
+          <div class="card-hint">Klik om te draaien</div>
+        </div>
+        <div class="card-face card-back">
+          <div class="card-label">element</div>
+          <div class="card-name" id="card-name">aluminium</div>
+        </div>
+      </div>
+    </div>
+    <div class="nav">
+      <button class="nav-btn" id="prev-btn" onclick="navigate(-1)" disabled>← Vorige</button>
+      <button class="shuffle-btn" onclick="shuffle()" title="Schud kaarten">🔀</button>
+      <button class="nav-btn" id="next-btn" onclick="navigate(1)">Volgende →</button>
+    </div>
+  </div>
+
+  <!-- Multiple choice mode -->
+  <div id="mc-mode" style="display:none">
+    <div class="card-scene">
+      <div class="card" style="cursor:default">
+        <div class="card-face card-front">
+          <div class="card-label" id="mc-label">Wat is het symbool voor...</div>
+          <div class="card-symbol" id="mc-question" style="font-size:3rem;color:var(--text)">aluminium</div>
+        </div>
+      </div>
+    </div>
+    <div class="choices" id="choices"></div>
+    <div class="feedback" id="feedback"></div>
+    <div class="nav">
+      <div></div>
+      <button class="nav-btn" id="mc-next" onclick="nextMC()" disabled>Volgende →</button>
+    </div>
+  </div>
+</div>
+
+<div class="score-screen" id="score-screen">
+  <div class="score-label">Eindresultaat</div>
+  <div class="score-num" id="final-score">0/30</div>
+  <div class="score-label" id="score-msg"></div>
+  <button class="restart-btn" onclick="restart()">Opnieuw spelen</button>
+</div>
+
+<script>
+const elements = [
+  {name:"aluminium", sym:"Al"}, {name:"barium", sym:"Ba"}, {name:"calcium", sym:"Ca"},
+  {name:"chroom", sym:"Cr"}, {name:"goud", sym:"Au"}, {name:"kalium", sym:"K"},
+  {name:"koper", sym:"Cu"}, {name:"kwik", sym:"Hg"}, {name:"lithium", sym:"Li"},
+  {name:"lood", sym:"Pb"}, {name:"magnesium", sym:"Mg"}, {name:"mangaan", sym:"Mn"},
+  {name:"natrium", sym:"Na"}, {name:"nikkel", sym:"Ni"}, {name:"platina", sym:"Pt"},
+  {name:"tin", sym:"Sn"}, {name:"titaan", sym:"Ti"}, {name:"ijzer", sym:"Fe"},
+  {name:"zilver", sym:"Ag"}, {name:"zink", sym:"Zn"}, {name:"argon", sym:"Ar"},
+  {name:"broom", sym:"Br"}, {name:"chloor", sym:"Cl"}, {name:"fluor", sym:"F"},
+  {name:"fosfor", sym:"P"}, {name:"helium", sym:"He"}, {name:"jood", sym:"I"},
+  {name:"koolstof", sym:"C"}, {name:"neon", sym:"Ne"}, {name:"silicium", sym:"Si"},
+  {name:"stikstof", sym:"N"}, {name:"waterstof", sym:"H"}, {name:"zuurstof", sym:"O"},
+  {name:"zwavel", sym:"S"}
+];
+
+let deck = [...elements];
+let idx = 0;
+let mode = 'flash';
+let mcScore = 0;
+let mcIdx = 0;
+let mcDeck = [];
+let answered = false;
+let questionType = 'sym2name'; // or 'name2sym'
+
+function setMode(m) {
+  mode = m;
+  document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  if (m === 'flash') {
+    document.getElementById('flash-mode').style.display = '';
+    document.getElementById('mc-mode').style.display = 'none';
+    document.getElementById('score-screen').classList.remove('visible');
+    document.getElementById('quiz-area').style.display = '';
+    updateFlash();
+  } else {
+    document.getElementById('flash-mode').style.display = 'none';
+    document.getElementById('mc-mode').style.display = '';
+    document.getElementById('score-screen').classList.remove('visible');
+    document.getElementById('quiz-area').style.display = '';
+    mcDeck = shuffle_arr([...elements]);
+    mcIdx = 0; mcScore = 0;
+    renderMC();
+  }
+}
+
+// ── Flashcard ──
+function updateFlash() {
+  const el = deck[idx];
+  document.getElementById('card-symbol').textContent = el.sym;
+  document.getElementById('card-name').textContent = el.name;
+  document.getElementById('card').classList.remove('flipped');
+  document.getElementById('prev-btn').disabled = idx === 0;
+  document.getElementById('next-btn').disabled = idx === deck.length - 1;
+  updateProgress(idx + 1, deck.length);
+}
+
+function flipCard() {
+  document.getElementById('card').classList.toggle('flipped');
+}
+
+function navigate(dir) {
+  idx = Math.max(0, Math.min(deck.length - 1, idx + dir));
+  updateFlash();
+}
+
+function shuffle() {
+  deck = shuffle_arr([...elements]);
+  idx = 0;
+  updateFlash();
+}
+
+// ── Multiple choice ──
+function renderMC() {
+  if (mcIdx >= mcDeck.length) { showScore(); return; }
+  answered = false;
+  const el = mcDeck[mcIdx];
+  // Alternate question direction
+  questionType = mcIdx % 2 === 0 ? 'sym2name' : 'name2sym';
+  const fb = document.getElementById('feedback');
+  fb.textContent = '';
+  fb.className = 'feedback';
+
+  if (questionType === 'sym2name') {
+    document.getElementById('mc-label').textContent = 'Welk element hoort bij dit symbool?';
+    document.getElementById('mc-question').textContent = el.sym;
+    document.getElementById('mc-question').style.color = 'var(--accent)';
+    document.getElementById('mc-question').style.fontSize = '4rem';
+  } else {
+    document.getElementById('mc-label').textContent = 'Wat is het symbool van...';
+    document.getElementById('mc-question').textContent = el.name;
+    document.getElementById('mc-question').style.color = 'var(--text)';
+    document.getElementById('mc-question').style.fontSize = '2.5rem';
+  }
+
+  // Build choices
+  const wrong = shuffle_arr(elements.filter(e => e.sym !== el.sym)).slice(0,3);
+  const choices = shuffle_arr([el, ...wrong]);
+  const container = document.getElementById('choices');
+  container.innerHTML = '';
+  choices.forEach(c => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.textContent = questionType === 'sym2name' ? c.name : c.sym;
+    btn.onclick = () => checkAnswer(btn, c, el);
+    container.appendChild(btn);
+  });
+
+  document.getElementById('mc-next').disabled = true;
+  updateProgress(mcIdx + 1, mcDeck.length, mcScore);
+}
+
+function checkAnswer(btn, chosen, correct) {
+  if (answered) return;
+  answered = true;
+  const isCorrect = chosen.sym === correct.sym;
+  const fb = document.getElementById('feedback');
+
+  document.querySelectorAll('.choice-btn').forEach(b => {
+    const val = questionType === 'sym2name' ? b.textContent : b.textContent;
+    const matchSym = elements.find(e => (questionType === 'sym2name' ? e.name : e.sym) === b.textContent);
+    if (matchSym && matchSym.sym === correct.sym) b.classList.add('correct');
+    b.disabled = true;
+  });
+
+  if (isCorrect) {
+    btn.classList.add('correct');
+    fb.textContent = '✓ Correct!';
+    fb.className = 'feedback correct';
+    mcScore++;
+  } else {
+    btn.classList.add('wrong');
+    fb.textContent = `✗ Fout — het is ${questionType === 'sym2name' ? correct.name : correct.sym}`;
+    fb.className = 'feedback wrong';
+  }
+
+  document.getElementById('mc-next').disabled = false;
+  document.getElementById('score-text').textContent = `Score: ${mcScore}`;
+}
+
+function nextMC() {
+  mcIdx++;
+  renderMC();
+}
+
+function showScore() {
+  document.getElementById('quiz-area').style.display = 'none';
+  const ss = document.getElementById('score-screen');
+  ss.classList.add('visible');
+  document.getElementById('final-score').textContent = `${mcScore}/${mcDeck.length}`;
+  const pct = mcScore / mcDeck.length;
+  let msg = pct >= 0.9 ? '🏆 Uitstekend!' : pct >= 0.7 ? '👍 Goed gedaan!' : pct >= 0.5 ? '📚 Blijf oefenen!' : '💪 Meer herhaling nodig';
+  document.getElementById('score-msg').textContent = msg;
+}
+
+function restart() {
+  document.getElementById('score-screen').classList.remove('visible');
+  document.getElementById('quiz-area').style.display = '';
+  mcDeck = shuffle_arr([...elements]);
+  mcIdx = 0; mcScore = 0;
+  document.getElementById('score-text').textContent = 'Score: 0';
+  renderMC();
+}
+
+function updateProgress(cur, total, score) {
+  document.getElementById('prog-text').textContent = `${cur} / ${total}`;
+  document.getElementById('prog-fill').style.width = (cur / total * 100) + '%';
+  if (score !== undefined) document.getElementById('score-text').textContent = `Score: ${score}`;
+}
+
+function shuffle_arr(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// Init
+updateFlash();
+</script>
+</body>
+</html>
