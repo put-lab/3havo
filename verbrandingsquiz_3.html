@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Verbrandingsreacties Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fdf6ee;
+  --card: #ffffff;
+  --flame: #e8470a;
+  --flame2: #f5a623;
+  --smoke: #6b7280;
+  --text: #1a1207;
+  --muted: #9ca3af;
+  --border: #e5d9c8;
+  --correct: #16a34a;
+  --correct-bg: #f0fdf4;
+  --wrong: #dc2626;
+  --wrong-bg: #fef2f2;
+  --incomplete-accent: #7c3aed;
+  --incomplete-bg: #faf5ff;
+  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 0 0 60px;
+  font-size: 20px;
+}
+
+/* ── Header ── */
+.hero {
+  background: linear-gradient(135deg, #1a0a00 0%, #3d1500 50%, #1a0a00 100%);
+  padding: 36px 24px 32px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 120%, rgba(232,71,10,0.4) 0%, transparent 70%);
+}
+
+.flame-icon {
+  font-size: 2.8rem;
+  display: block;
+  margin-bottom: 8px;
+  position: relative;
+  animation: flicker 1.8s ease-in-out infinite alternate;
+}
+
+@keyframes flicker {
+  0%   { transform: scaleY(1) rotate(-1deg); }
+  100% { transform: scaleY(1.06) rotate(1deg); }
+}
+
+.hero h1 {
+  font-size: 1.9rem;
+  font-weight: 900;
+  color: #fff;
+  position: relative;
+  letter-spacing: -0.5px;
+  line-height: 1.1;
+}
+
+.hero h1 span { color: var(--flame2); }
+
+.hero p {
+  color: rgba(255,255,255,0.55);
+  font-size: 1rem;
+  margin-top: 8px;
+  position: relative;
+}
+
+/* ── Phase tabs ── */
+.phase-bar {
+  display: flex;
+  max-width: 680px;
+  margin: 0 auto;
+  border-bottom: 2px solid var(--border);
+  background: var(--card);
+  padding: 0 16px;
+}
+
+.phase-tab {
+  flex: 1;
+  padding: 14px 8px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--muted);
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.phase-tab.active {
+  color: var(--flame);
+  border-bottom-color: var(--flame);
+}
+
+.phase-tab.done {
+  color: var(--correct);
+}
+
+.phase-tab .badge {
+  background: var(--correct);
+  color: white;
+  font-size: 0.65rem;
+  border-radius: 10px;
+  padding: 1px 6px;
+}
+
+/* ── Main content ── */
+.main {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+/* ── Progress ── */
+.progress-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  font-size: 1rem;
+  font-family: 'JetBrains Mono', monospace;
+  color: var(--muted);
+}
+
+.progress-track {
+  height: 5px;
+  background: var(--border);
+  border-radius: 3px;
+  margin-bottom: 20px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--flame), var(--flame2));
+  border-radius: 3px;
+  transition: width 0.5s ease;
+}
+
+/* ── Question card ── */
+.q-card {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow);
+  margin-bottom: 20px;
+}
+
+.q-type-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: var(--flame);
+  margin-bottom: 12px;
+}
+
+.q-type-label.incomplete { color: var(--incomplete-accent); }
+
+/* ── Equation display ── */
+.equation-wrap {
+  background: #1a0a00;
+  border-radius: 12px;
+  padding: 20px 16px;
+  margin-bottom: 20px;
+  overflow-x: auto;
+}
+
+.equation {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1.4rem;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.eq-term {
+  display: flex;
+  align-items: baseline;
+  gap: 2px;
+}
+
+.eq-coeff {
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.eq-coeff.blank {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 38px;
+  height: 34px;
+  background: rgba(245,166,35,0.15);
+  border: 1.5px dashed var(--flame2);
+  border-radius: 6px;
+  color: var(--flame2);
+  font-size: 1.2rem;
+  padding: 0 8px;
+}
+
+.eq-coeff.blank.answered-correct {
+  background: rgba(22,163,74,0.2);
+  border-color: #16a34a;
+  color: #16a34a;
+  border-style: solid;
+}
+
+.eq-coeff.blank.answered-wrong {
+  background: rgba(220,38,38,0.2);
+  border-color: #dc2626;
+  color: #dc2626;
+  border-style: solid;
+}
+
+.eq-formula {
+  font-size: 1rem;
+  color: rgba(255,255,255,0.85);
+}
+
+.eq-formula sub { font-size: 0.65em; }
+
+.eq-arrow {
+  color: var(--flame2);
+  font-size: 1.3rem;
+  padding: 0 4px;
+}
+
+.eq-plus {
+  color: rgba(255,255,255,0.4);
+  font-size: 1.1rem;
+}
+
+.eq-coeff.fixed { color: rgba(255,255,255,0.9); }
+
+/* ── Instruction ── */
+.q-instruction {
+  font-size: 0.85rem;
+  color: var(--smoke);
+  margin-bottom: 14px;
+  line-height: 1.5;
+}
+
+.blank-label {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--flame2);
+  background: rgba(245,166,35,0.1);
+  border-radius: 4px;
+  padding: 1px 6px;
+  margin: 0 2px;
+}
+
+/* ── Choices grid ── */
+.choices-group {
+  margin-bottom: 14px;
+}
+
+.choices-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.choices {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.choice-btn {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s;
+  min-width: 52px;
+  text-align: center;
+}
+
+.choice-btn:hover:not(:disabled) {
+  border-color: var(--flame);
+  background: #fff5f0;
+  color: var(--flame);
+}
+
+.choice-btn.correct {
+  background: var(--correct-bg);
+  border-color: var(--correct);
+  color: var(--correct);
+}
+
+.choice-btn.wrong {
+  background: var(--wrong-bg);
+  border-color: var(--wrong);
+  color: var(--wrong);
+}
+
+.choice-btn:disabled { cursor: default; }
+
+.choice-btn.selected {
+  background: #fff5f0;
+  border-color: var(--flame);
+  color: var(--flame);
+}
+
+.eq-coeff.blank.answered-pending {
+  background: rgba(245,166,35,0.25);
+  border-color: var(--flame2);
+  border-style: solid;
+  color: var(--flame2);
+}
+.check-btn {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 12px 28px;
+  border-radius: 10px;
+  border: none;
+  background: var(--flame);
+  color: white;
+  cursor: pointer;
+  margin-top: 4px;
+  margin-bottom: 12px;
+  transition: all 0.15s;
+  box-shadow: 0 3px 10px rgba(232,71,10,0.25);
+}
+
+.check-btn:hover:not(:disabled) { background: #c73d08; }
+.check-btn:disabled { background: var(--border); color: var(--muted); cursor: default; box-shadow: none; }
+
+/* ── Feedback ── */
+.feedback-bar {
+  min-height: 28px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 6px 0;
+  color: transparent;
+  transition: color 0.2s;
+  line-height: 1.4;
+}
+
+.feedback-bar.correct { color: var(--correct); }
+.feedback-bar.wrong { color: var(--wrong); }
+
+/* ── Uitleg box ── */
+.uitleg {
+  display: none;
+  background: #f8f4ff;
+  border: 1.5px solid #d8b4fe;
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 0.85rem;
+  color: #4c1d95;
+  line-height: 1.6;
+  margin-top: 10px;
+}
+
+.uitleg.show { display: block; }
+.uitleg strong { color: #7c3aed; }
+
+/* ── Nav ── */
+.nav-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 4px;
+}
+
+.nav-btn {
+  font-family: 'Outfit', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 10px 24px;
+  border-radius: 30px;
+  border: 1.5px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.nav-btn:hover { border-color: var(--flame); color: var(--flame); }
+.nav-btn:disabled { opacity: 0.3; cursor: default; }
+
+.nav-btn.primary {
+  background: var(--flame);
+  color: white;
+  border-color: var(--flame);
+}
+
+.nav-btn.primary:hover { background: #c73d08; border-color: #c73d08; color: white; }
+
+/* ── Score screen ── */
+.score-screen {
+  display: none;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.score-screen.show { display: block; }
+
+.score-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--flame), var(--flame2));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 20px;
+  box-shadow: 0 8px 32px rgba(232,71,10,0.3);
+}
+
+.score-big {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: white;
+  line-height: 1;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.score-sub { color: rgba(255,255,255,0.8); font-size: 0.75rem; }
+
+.score-title {
+  font-size: 1.4rem;
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.score-msg {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-bottom: 28px;
+}
+
+.score-breakdown {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 0;
+  font-size: 0.85rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.breakdown-row:last-child { border-bottom: none; }
+
+.restart-btn {
+  background: var(--flame);
+  color: white;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 14px 40px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(232,71,10,0.3);
+}
+
+/* ── Phase intro ── */
+.phase-intro {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.phase-intro h2 { font-size: 1.2rem; font-weight: 800; margin-bottom: 8px; }
+.phase-intro p { color: var(--smoke); font-size: 0.88rem; line-height: 1.6; }
+.phase-intro .rule-box {
+  background: var(--bg);
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-top: 14px;
+  font-size: 0.82rem;
+  color: var(--text);
+  text-align: left;
+  line-height: 1.8;
+  font-family: 'JetBrains Mono', monospace;
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="flame-icon">🔥</span>
+  <h1>Verbrandings<span>reacties</span></h1>
+  <p>Maak de reactievergelijking kloppend — kies de juiste coëfficiënten</p>
+</div>
+
+<div class="phase-bar">
+  <button class="phase-tab active" id="tab-vol" onclick="jumpPhase(0)">🔥 Volledig</button>
+  <button class="phase-tab" id="tab-onvol" onclick="jumpPhase(1)">💨 Onvolledig</button>
+</div>
+
+<div class="main">
+  <div class="progress-row">
+    <span id="prog-text">Vraag 1 / 12</span>
+    <span id="score-live">Score: 0</span>
+  </div>
+  <div class="progress-track">
+    <div class="progress-fill" id="prog-fill" style="width:0%"></div>
+  </div>
+
+  <div id="quiz-area">
+    <!-- question rendered here -->
+  </div>
+
+  <div class="score-screen" id="score-screen">
+    <div class="score-circle">
+      <div class="score-big" id="final-num">0</div>
+      <div class="score-sub">punten</div>
+    </div>
+    <div class="score-title" id="final-title">Goed gedaan!</div>
+    <div class="score-msg" id="final-msg"></div>
+    <div class="score-breakdown" id="breakdown"></div>
+    <button class="restart-btn" onclick="restart()">🔄 Opnieuw</button>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// DATA: alle vragen
+// Elk blank heeft: id, label (voor de molecule), opties[], antwoord
+// ─────────────────────────────────────────────
+
+const PHASES = [
+  {
+    id: 'volledig',
+    label: 'Volledige verbranding',
+    intro: 'Bij <strong>volledige verbranding</strong> reageert de koolwaterstof met voldoende zuurstof (O₂). De producten zijn altijd <strong>CO₂</strong> en <strong>H₂O</strong>.',
+    rule: 'CₓHᵧ  +  O₂  →  CO₂  +  H₂O\n\nTip: balanceer eerst C, dan H, dan O.',
+    color: 'var(--flame)',
+    questions: [
+      {
+        name: 'Methaan — CH₄',
+        blanks: [
+          { id:'a', before:'', formula:'CH₄', after:'', role:'reactant' },
+          { id:'b', before:'', formula:'O₂', after:'', role:'reactant' },
+          { id:'c', before:'', formula:'CO₂', after:'', role:'product' },
+          { id:'d', before:'', formula:'H₂O', after:'', role:'product' },
+        ],
+        answers: { a:1, b:2, c:1, d:2 },
+        options: { a:[1,2,3], b:[1,2,3,4], c:[1,2,3], d:[1,2,3,4] },
+        uitleg: 'CH₄ + 2O₂ → CO₂ + 2H₂O\n1C → 1CO₂ · 4H → 2H₂O · O: 2×2=4 = 1×2+2×1 ✓'
+      },
+      {
+        name: 'Ethaan — C₂H₆',
+        blanks: [
+          { id:'a', formula:'C₂H₆', role:'reactant' },
+          { id:'b', formula:'O₂', role:'reactant' },
+          { id:'c', formula:'CO₂', role:'product' },
+          { id:'d', formula:'H₂O', role:'product' },
+        ],
+        answers: { a:2, b:7, c:4, d:6 },
+        options: { a:[1,2,3,4], b:[5,6,7,8], c:[2,4,6,8], d:[4,6,8,10] },
+        uitleg: '2C₂H₆ + 7O₂ → 4CO₂ + 6H₂O\n4C → 4CO₂ · 12H → 6H₂O · O: 7×2=14 = 4×2+6×1 ✓'
+      },
+      {
+        name: 'Propaan — C₃H₈',
+        blanks: [
+          { id:'a', formula:'C₃H₈', role:'reactant' },
+          { id:'b', formula:'O₂', role:'reactant' },
+          { id:'c', formula:'CO₂', role:'product' },
+          { id:'d', formula:'H₂O', role:'product' },
+        ],
+        answers: { a:1, b:5, c:3, d:4 },
+        options: { a:[1,2,3], b:[3,4,5,6], c:[2,3,4,5], d:[2,3,4,5] },
+        uitleg: 'C₃H₈ + 5O₂ → 3CO₂ + 4H₂O\n3C → 3CO₂ · 8H → 4H₂O · O: 5×2=10 = 3×2+4×1 ✓'
+      },
+      {
+        name: 'Butaan — C₄H₁₀',
+        blanks: [
+          { id:'a', formula:'C₄H₁₀', role:'reactant' },
+          { id:'b', formula:'O₂', role:'reactant' },
+          { id:'c', formula:'CO₂', role:'product' },
+          { id:'d', formula:'H₂O', role:'product' },
+        ],
+        answers: { a:2, b:13, c:8, d:10 },
+        options: { a:[1,2,3], b:[11,12,13,14], c:[6,7,8,9], d:[8,9,10,11] },
+        uitleg: '2C₄H₁₀ + 13O₂ → 8CO₂ + 10H₂O\n8C → 8CO₂ · 20H → 10H₂O · O: 13×2=26 = 8×2+10×1 ✓'
+      },
+      {
+        name: 'Etheen — C₂H₄',
+        blanks: [
+          { id:'a', formula:'C₂H₄', role:'reactant' },
+          { id:'b', formula:'O₂', role:'reactant' },
+          { id:'c', formula:'CO₂', role:'product' },
+          { id:'d', formula:'H₂O', role:'product' },
+        ],
+        answers: { a:1, b:3, c:2, d:2 },
+        options: { a:[1,2,3], b:[2,3,4,5], c:[1,2,3,4], d:[1,2,3,4] },
+        uitleg: 'C₂H₄ + 3O₂ → 2CO₂ + 2H₂O\n2C → 2CO₂ · 4H → 2H₂O · O: 3×2=6 = 2×2+2×1 ✓'
+      },
+      {
+        name: 'Ethyn — C₂H₂',
+        blanks: [
+          { id:'a', formula:'C₂H₂', role:'reactant' },
+          { id:'b', formula:'O₂', role:'reactant' },
+          { id:'c', formula:'CO₂', role:'product' },
+          { id:'d', formula:'H₂O', role:'product' },
+        ],
+        answers: { a:2, b:5, c:4, d:2 },
+        options: { a:[1,2,3], b:[3,4,5,6], c:[2,3,4,5], d:[1,2,3,4] },
+        uitleg: '2C₂H₂ + 5O₂ → 4CO₂ + 2H₂O\n4C → 4CO₂ · 4H → 2H₂O · O: 5×2=10 = 4×2+2×1 ✓'
+      },
+    ]
+  },
+  {
+    id: 'onvolledig',
+    label: 'Onvolledige verbranding',
+    intro: 'Bij <strong>onvolledige verbranding</strong> is er <em>te weinig zuurstof</em>. Er ontstaat <strong>koolstofmonoxide (CO)</strong> en/of <strong>roet (C)</strong> in plaats van CO₂.',
+    rule: 'Product CO:  CₓHᵧ + O₂ → CO + H₂O\nProduct C:   CₓHᵧ + O₂ → C + H₂O\n\nLet op: H₂O blijft altijd product!',
+    color: 'var(--incomplete-accent)',
+    questions: [
+      {
+        name: 'Methaan → CO',
+        product: 'CO',
+        blanks: [
+          { id:'a', formula:'CH₄', role:'reactant' },
+          { id:'b', formula:'O₂', role:'reactant' },
+          { id:'c', formula:'CO', role:'product' },
+          { id:'d', formula:'H₂O', role:'product' },
+        ],
+        answers: { a:2, b:3, c:2, d:4 },
+        options: { a:[1,2,3], b:[2,3,4,5], c:[1,2,3,4], d:[2,3,4,5] },
+        uitleg: '2CH₄ + 3O₂ → 2CO + 4H₂O\n2C → 2CO · 8H → 4H₂O · O: 3×2=6 = 2×1+4×1 ✓'
+      },
+      {
+        name: 'Ethaan → CO',
+        product: 'CO',
+        blanks: [
+          { id:'a', formula:'C₂H₆', role:'reactant' },
+          { id:'b', formula:'O₂', role:'reactant' },
+          { id:'c', formula:'CO', role:'product' },
+          { id:'d', formula:'H₂O', role:'product' },
+        ],
+        answers: { a:2, b:5, c:4, d:6 },
+        options: { a:[1,2,3], b:[4,5,6,7], c:[2,3,4,5], d:[4,5,6,7] },
+        uitleg: '2C₂H₆ + 5O₂ → 4CO + 6H₂O\n4C → 4CO · 12H → 6H₂O · O: 5×2=10 = 4×1+6×1 ✓'
+      },
+      {
+        name: 'Propaan → CO',
+        product: 'CO',
+        blanks: [
+          { id:'a', formula:'C₃H₈', role:'reactant' },
+          { id:'b', formula:'O₂', role:'reactant' },
+          { id:'c', formula:'CO', role:'product' },
+          { id:'d', formula:'H₂O', role:'product' },
+        ],
+        answers: { a:2, b:7, c:6, d:8 },
+        options: { a:[1,2,3], b:[5,6,7,8], c:[4,5,6,7], d:[6,7,8,9] },
+        uitleg: '2C₃H₈ + 7O₂ → 6CO + 8H₂O\n6C → 6CO · 16H → 8H₂O · O: 7×2=14 = 6×1+8×1 ✓'
+      },
+      {
+        name: 'Propaan → roet (C)',
+        product: 'C',
+        blanks: [
+          { id:'a', formula:'C₃H₈', role:'reactant' },
+          { id:'b', formula:'O₂', role:'reactant' },
+          { id:'c', formula:'C', role:'product' },
+          { id:'d', formula:'H₂O', role:'product' },
+        ],
+        answers: { a:1, b:2, c:3, d:4 },
+        options: { a:[1,2,3], b:[1,2,3,4], c:[2,3,4,5], d:[2,3,4,5] },
+        uitleg: 'C₃H₈ + 2O₂ → 3C + 4H₂O\n3C → 3C(roet) · 8H → 4H₂O · O: 2×2=4 = 0+4×1 ✓'
+      },
+      {
+        name: 'Etheen → CO',
+        product: 'CO',
+        blanks: [
+          { id:'a', formula:'C₂H₄', role:'reactant' },
+          { id:'b', formula:'O₂', role:'reactant' },
+          { id:'c', formula:'CO', role:'product' },
+          { id:'d', formula:'H₂O', role:'product' },
+        ],
+        answers: { a:1, b:2, c:2, d:2 },
+        options: { a:[1,2,3], b:[1,2,3,4], c:[1,2,3,4], d:[1,2,3,4] },
+        uitleg: 'C₂H₄ + 2O₂ → 2CO + 2H₂O\n2C → 2CO · 4H → 2H₂O · O: 2×2=4 = 2×1+2×1 ✓'
+      },
+      {
+        name: 'Methaan → roet (C)',
+        product: 'C',
+        blanks: [
+          { id:'a', formula:'CH₄', role:'reactant' },
+          { id:'b', formula:'O₂', role:'reactant' },
+          { id:'c', formula:'C', role:'product' },
+          { id:'d', formula:'H₂O', role:'product' },
+        ],
+        answers: { a:1, b:1, c:1, d:2 },
+        options: { a:[1,2,3], b:[1,2,3,4], c:[1,2,3], d:[1,2,3,4] },
+        uitleg: 'CH₄ + O₂ → C + 2H₂O\n1C → 1C(roet) · 4H → 2H₂O · O: 1×2=2 = 0+2×1 ✓'
+      },
+    ]
+  }
+];
+
+// ─────────────────────────────────────────────
+// STATE
+// ─────────────────────────────────────────────
+let allQ = [];        // flat list of all questions with phase info
+let qIdx = 0;
+let score = 0;
+let blankStates = {}; // { blankId: { answered, correct } }
+let blanksDone = 0;
+let totalBlanks = 0;
+let phaseScores = [0,0];
+let phaseTotals = [0,0];
+
+function buildAllQ() {
+  allQ = [];
+  PHASES.forEach((phase, pi) => {
+    phase.questions.forEach((q, qi) => {
+      allQ.push({ ...q, phaseIdx: pi, phaseLabel: phase.label, qiInPhase: qi });
+    });
+  });
+}
+
+// ─────────────────────────────────────────────
+// RENDER
+// ─────────────────────────────────────────────
+function fmtFormula(str) {
+  // converts subscript unicode digits and regular digits after letters to <sub>
+  return str
+    .replace(/([A-Za-z])(\d+)/g, '$1<sub>$2</sub>')
+    .replace(/([₀-₉]+)/g, m => '<sub>' + m.replace(/[₀-₉]/g, c => '₀₁₂₃₄₅₆₇₈₉'.indexOf(c)) + '</sub>');
+}
+
+function renderQuestion() {
+  const area = document.getElementById('quiz-area');
+  if (qIdx >= allQ.length) { showScore(); return; }
+
+  const q = allQ[qIdx];
+  const phase = PHASES[q.phaseIdx];
+  const isIncomplete = q.phaseIdx === 1;
+  const typeClass = isIncomplete ? 'incomplete' : '';
+
+  // Reset blank states
+  blankStates = {};
+  blanksDone = 0;
+  totalBlanks = q.blanks.length;
+  q.blanks.forEach(b => { blankStates[b.id] = { selected: null, locked: false, hadError: false }; });
+
+  // Phase intro for first question of each phase
+  let introHTML = '';
+  if (q.qiInPhase === 0) {
+    introHTML = `
+      <div class="phase-intro">
+        <h2>${isIncomplete ? '💨' : '🔥'} ${phase.label}</h2>
+        <p>${phase.intro}</p>
+        <div class="rule-box">${phase.rule.replace(/\n/g,'<br>')}</div>
+      </div>`;
+  }
+
+  // Build equation HTML
+  const reactants = q.blanks.filter(b => b.role === 'reactant');
+  const products  = q.blanks.filter(b => b.role === 'product');
+
+  function termHTML(b) {
+    const coeff = q.answers[b.id];
+    const display = coeff === 1 ? '' : coeff; // don't show 1
+    return `<span class="eq-term">
+      <span class="eq-coeff blank" id="blank-${b.id}" data-id="${b.id}">?</span>
+      <span class="eq-formula">${fmtFormula(b.formula)}</span>
+    </span>`;
+  }
+
+  const reactHTML = reactants.map(termHTML).join('<span class="eq-plus"> + </span>');
+  const prodHTML  = products.map(termHTML).join('<span class="eq-plus"> + </span>');
+
+  // Build choices sections
+  let choicesHTML = '';
+  q.blanks.forEach(b => {
+    const label = `coëfficiënt voor ${fmtFormula(b.formula)}`;
+    const opts = q.options[b.id];
+    const btns = opts.map(o =>
+      `<button class="choice-btn" data-blank="${b.id}" data-val="${o}" onclick="handleChoice(this,'${b.id}',${o})">${o}</button>`
+    ).join('');
+    choicesHTML += `
+      <div class="choices-group" id="group-${b.id}">
+        <div class="choices-label">${label}</div>
+        <div class="choices">${btns}</div>
+      </div>`;
+  });
+
+  area.innerHTML = `
+    ${introHTML}
+    <div class="q-card">
+      <div class="q-type-label ${typeClass}">${isIncomplete ? '💨 Onvolledige verbranding' : '🔥 Volledige verbranding'}</div>
+      <div class="equation-wrap">
+        <div class="equation">
+          ${reactHTML}
+          <span class="eq-arrow">→</span>
+          ${prodHTML}
+        </div>
+      </div>
+      <p class="q-instruction">Kies voor elk vraagteken de juiste coëfficiënt, daarna klik op <strong>Controleer</strong>.</p>
+      ${choicesHTML}
+      <button class="check-btn" id="check-btn" onclick="checkAll()" disabled>Controleer →</button>
+      <div class="feedback-bar" id="feedback"></div>
+      <div class="uitleg" id="uitleg"></div>
+    </div>
+    <div class="nav-row">
+      <button class="nav-btn" onclick="prevQ()" ${qIdx === 0 ? 'disabled' : ''}>← Vorige</button>
+      <button class="nav-btn primary" id="next-btn" onclick="nextQ()" disabled>Volgende →</button>
+    </div>`;
+
+  updateProgress();
+  updateTabs();
+}
+
+function handleChoice(btn, blankId, val) {
+  const b = blankStates[blankId];
+  if (b.locked) return; // blank already correct, can't change
+
+  const q = allQ[qIdx];
+
+  // Deselect previously selected button for this blank
+  document.querySelectorAll(`[data-blank="${blankId}"]`).forEach(el => {
+    el.classList.remove('selected');
+  });
+
+  // Select this button
+  btn.classList.add('selected');
+  b.selected = val;
+
+  // Update blank display to show chosen value
+  const blankEl = document.getElementById(`blank-${blankId}`);
+  blankEl.textContent = val;
+  blankEl.classList.remove('answered-wrong');
+  blankEl.classList.add('answered-pending');
+
+  // Count how many blanks have a selection
+  const allSelected = Object.values(blankStates).every(s => s.selected !== null || s.locked);
+  document.getElementById('check-btn').disabled = !allSelected;
+}
+
+function checkAll() {
+  const q = allQ[qIdx];
+  let anyWrong = false;
+
+  q.blanks.forEach(b => {
+    const state = blankStates[b.id];
+    if (state.locked) return; // already correct from previous check
+
+    const correct = q.answers[b.id];
+    const chosen = state.selected;
+    const isCorrect = chosen === correct;
+    const blankEl = document.getElementById(`blank-${b.id}`);
+
+    if (isCorrect) {
+      // Lock this blank as correct
+      state.locked = true;
+      state.hadError = state.hadError || false;
+      blankEl.textContent = correct;
+      blankEl.classList.remove('answered-pending', 'answered-wrong');
+      blankEl.classList.add('answered-correct');
+
+      // Mark the correct button green, disable all for this blank
+      document.querySelectorAll(`[data-blank="${b.id}"]`).forEach(el => {
+        el.disabled = true;
+        el.classList.remove('selected');
+        if (parseInt(el.dataset.val) === correct) el.classList.add('correct');
+      });
+
+      // Score: only if no prior error on this blank
+      if (!state.hadError) {
+        score++;
+        document.getElementById('score-live').textContent = `Score: ${score}`;
+        phaseScores[q.phaseIdx]++;
+      }
+
+    } else {
+      // Wrong — mark red, reset for retry
+      anyWrong = true;
+      state.hadError = true;
+      state.selected = null;
+      blankEl.textContent = '?';
+      blankEl.classList.remove('answered-pending', 'answered-correct');
+      blankEl.classList.add('answered-wrong');
+
+      // Flash selected button red, keep others available
+      document.querySelectorAll(`[data-blank="${b.id}"]`).forEach(el => {
+        el.classList.remove('selected');
+        el.disabled = false;
+        if (parseInt(el.dataset.val) === chosen) {
+          el.classList.add('wrong');
+          // Remove wrong class after animation
+          setTimeout(() => el.classList.remove('wrong'), 1200);
+        }
+      });
+    }
+  });
+
+  const checkBtn = document.getElementById('check-btn');
+  const fb = document.getElementById('feedback');
+
+  if (anyWrong) {
+    fb.textContent = '✗ Niet helemaal — verbeter de rode coëfficiënten en probeer opnieuw.';
+    fb.className = 'feedback-bar wrong';
+    checkBtn.disabled = true; // disable until all blanks re-filled
+  } else {
+    // All correct!
+    checkBtn.style.display = 'none';
+    const allFirstTry = !Object.values(blankStates).some(s => s.hadError);
+    fb.textContent = allFirstTry ? '✓ Perfect — reactie in één keer kloppend!' : '✓ Reactie klopt — goed volgehouden!';
+    fb.className = 'feedback-bar correct';
+
+    const uitleg = document.getElementById('uitleg');
+    uitleg.innerHTML = `<strong>Uitleg:</strong> ${q.uitleg.replace(/\n/g,'<br>')}`;
+    uitleg.classList.add('show');
+    document.getElementById('next-btn').disabled = false;
+  }
+}
+
+function nextQ() {
+  qIdx++;
+  renderQuestion();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function prevQ() {
+  if (qIdx > 0) { qIdx--; renderQuestion(); }
+}
+
+function jumpPhase(pi) {
+  const startIdx = pi === 0 ? 0 : PHASES[0].questions.length;
+  qIdx = startIdx;
+  renderQuestion();
+}
+
+function updateProgress() {
+  const total = allQ.length;
+  document.getElementById('prog-text').textContent = `Vraag ${qIdx + 1} / ${total}`;
+  document.getElementById('prog-fill').style.width = ((qIdx) / total * 100) + '%';
+}
+
+function updateTabs() {
+  const p0done = qIdx >= PHASES[0].questions.length;
+  document.getElementById('tab-vol').className = 'phase-tab' + (qIdx < PHASES[0].questions.length ? ' active' : ' done');
+  document.getElementById('tab-onvol').className = 'phase-tab' + (qIdx >= PHASES[0].questions.length && qIdx < allQ.length ? ' active' : (p0done && qIdx >= allQ.length ? ' done' : ''));
+}
+
+function showScore() {
+  document.getElementById('quiz-area').style.display = 'none';
+  document.getElementById('score-screen').classList.add('show');
+
+  const maxScore = allQ.reduce((s,q) => s + q.blanks.length, 0);
+  document.getElementById('final-num').textContent = score;
+  document.getElementById('prog-text').textContent = 'Klaar!';
+  document.getElementById('prog-fill').style.width = '100%';
+
+  const pct = score / maxScore;
+  const titles = ['Blijf oefenen! 💪', 'Goed bezig! 👍', 'Heel goed! 🎯', 'Uitstekend! 🏆'];
+  const msgs = [
+    'Herhaal de balanseringsregels en probeer opnieuw.',
+    'Je begrijpt de basis — oefen nog wat met de coëfficiënten.',
+    'Bijna perfect — een paar details te finetunen.',
+    'Je kunt verbrandingsreacties feilloos balanceren!'
+  ];
+  const ti = pct < 0.5 ? 0 : pct < 0.7 ? 1 : pct < 0.9 ? 2 : 3;
+  document.getElementById('final-title').textContent = titles[ti];
+  document.getElementById('final-msg').textContent = msgs[ti];
+
+  const p0total = PHASES[0].questions.reduce((s,q)=>s+q.blanks.length,0);
+  const p1total = PHASES[1].questions.reduce((s,q)=>s+q.blanks.length,0);
+  document.getElementById('breakdown').innerHTML = `
+    <div class="breakdown-row"><span>🔥 Volledige verbranding</span><span>${phaseScores[0]} / ${p0total}</span></div>
+    <div class="breakdown-row"><span>💨 Onvolledige verbranding</span><span>${phaseScores[1]} / ${p1total}</span></div>
+    <div class="breakdown-row"><span><strong>Totaal</strong></span><span><strong>${score} / ${maxScore}</strong></span></div>`;
+}
+
+function restart() {
+  qIdx = 0; score = 0; phaseScores = [0,0];
+  document.getElementById('score-live').textContent = 'Score: 0';
+  document.getElementById('score-screen').classList.remove('show');
+  document.getElementById('quiz-area').style.display = '';
+  renderQuestion();
+}
+
+// ─────────────────────────────────────────────
+// INIT
+// ─────────────────────────────────────────────
+buildAllQ();
+// compute phase totals
+PHASES.forEach((ph, pi) => {
+  phaseTotals[pi] = ph.questions.reduce((s,q)=>s+q.blanks.length,0);
+});
+renderQuestion();
+</script>
+</body>
+</html>
