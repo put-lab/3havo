@@ -339,7 +339,7 @@
         <div class="card-face card-back">
           <div class="card-label">element</div>
           <div class="card-name" id="card-name">aluminium</div>
-          <div class="card-hint" id="card-diatomic" style="display:none;margin-top:6px;font-size:1rem;color:var(--accent2)"></div>
+          <div id="card-diatomic" style="display:none;margin-top:10px;font-size:1rem;font-family:'DM Mono',monospace;color:var(--accent2)">formule stof: <span id="card-formula"></span></div>
         </div>
       </div>
     </div>
@@ -423,11 +423,30 @@ function setMode(m) {
   }
 }
 
+// ── Helpers ──
+function fmtFormula(sym) {
+  // e.g. "H2" -> "H<sub>2</sub>", works for Br2, Cl2 etc.
+  return sym.replace(/(\d+)/g, '<sub>$1</sub>');
+}
+
+function diatomicHTML(el) {
+  if (!el.diatomic) return null;
+  return fmtFormula(el.diatomic.replace('₂','2').replace('₃','3'));
+}
+
 // ── Flashcard ──
 function updateFlash() {
   const el = deck[idx];
   document.getElementById('card-symbol').textContent = el.sym;
   document.getElementById('card-name').textContent = el.name;
+  const dEl = document.getElementById('card-diatomic');
+  const fEl = document.getElementById('card-formula');
+  if (el.diatomic) {
+    fEl.innerHTML = diatomicHTML(el);
+    dEl.style.display = '';
+  } else {
+    dEl.style.display = 'none';
+  }
   document.getElementById('card').classList.remove('flipped');
   document.getElementById('prev-btn').disabled = idx === 0;
   document.getElementById('next-btn').disabled = idx === deck.length - 1;
@@ -460,16 +479,22 @@ function renderMC() {
   fb.textContent = '';
   fb.className = 'feedback';
 
+  const qEl = document.getElementById('mc-question');
   if (questionType === 'sym2name') {
     document.getElementById('mc-label').textContent = 'Welk element hoort bij dit symbool?';
-    document.getElementById('mc-question').textContent = el.sym;
-    document.getElementById('mc-question').style.color = 'var(--accent)';
-    document.getElementById('mc-question').style.fontSize = '4rem';
+    // Show atom symbol (and diatomic formula if applicable)
+    if (el.diatomic) {
+      qEl.innerHTML = el.sym + ' <span style="font-size:1.6rem;color:var(--muted)">(stof: ' + diatomicHTML(el) + ')</span>';
+    } else {
+      qEl.textContent = el.sym;
+    }
+    qEl.style.color = 'var(--accent)';
+    qEl.style.fontSize = '4rem';
   } else {
-    document.getElementById('mc-label').textContent = 'Wat is het symbool van...';
-    document.getElementById('mc-question').textContent = el.name;
-    document.getElementById('mc-question').style.color = 'var(--text)';
-    document.getElementById('mc-question').style.fontSize = '2.5rem';
+    document.getElementById('mc-label').textContent = 'Wat is de formule van de stof...';
+    qEl.textContent = el.name;
+    qEl.style.color = 'var(--text)';
+    qEl.style.fontSize = '2.5rem';
   }
 
   // Build choices
@@ -480,7 +505,12 @@ function renderMC() {
   choices.forEach(c => {
     const btn = document.createElement('button');
     btn.className = 'choice-btn';
-    btn.textContent = questionType === 'sym2name' ? c.name : c.sym;
+    btn.dataset.sym = c.sym;
+    if (questionType === 'sym2name') {
+      btn.textContent = c.name;
+    } else {
+      btn.innerHTML = c.diatomic ? diatomicHTML(c.diatomic.replace('₂','2')) : c.sym;
+    }
     btn.onclick = () => checkAnswer(btn, c, el);
     container.appendChild(btn);
   });
@@ -496,20 +526,20 @@ function checkAnswer(btn, chosen, correct) {
   const fb = document.getElementById('feedback');
 
   document.querySelectorAll('.choice-btn').forEach(b => {
-    const val = questionType === 'sym2name' ? b.textContent : b.textContent;
-    const matchSym = elements.find(e => (questionType === 'sym2name' ? e.name : e.sym) === b.textContent);
-    if (matchSym && matchSym.sym === correct.sym) b.classList.add('correct');
+    if (b.dataset.sym === correct.sym) b.classList.add('correct');
     b.disabled = true;
   });
 
   if (isCorrect) {
-    btn.classList.add('correct');
     fb.textContent = '✓ Correct!';
     fb.className = 'feedback correct';
     mcScore++;
   } else {
     btn.classList.add('wrong');
-    fb.textContent = `✗ Fout — het is ${questionType === 'sym2name' ? correct.name : correct.sym}`;
+    const correctAnswer = questionType === 'sym2name'
+      ? correct.name
+      : (correct.diatomic ? diatomicHTML(correct.diatomic.replace('₂','2')) : correct.sym);
+    fb.innerHTML = `✗ Fout — het is ${correctAnswer}`;
     fb.className = 'feedback wrong';
   }
 
