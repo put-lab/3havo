@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>3 havo scheikunde</title>
+  <style>
+    body { font-family: sans-serif; max-width: 600px; margin: 2rem auto; padding: 0 1rem; }
+    h1 { font-size: 22px; font-weight: 500; margin: 0 0 0.5rem; }
+    p { font-size: 14px; color: #666; margin: 0 0 1.5rem; }
+    .section { font-size: 12px; color: #999; text-transform: uppercase; margin: 1.5rem 0 0.5rem; }
+    a.card { display: flex; justify-content: space-between; align-items: center;
+             border: 1px solid #ddd; border-radius: 10px; padding: 1rem 1.25rem;
+             margin-bottom: 12px; text-decoration: none; color: inherit; }
+    a.card:hover { background: #f9f9f9; }
+    .card-title { font-size: 15px; font-weight: 500; }
+    .card-sub { font-size: 13px; color: #666; margin-top: 4px; }
+    .badge { font-size: 12px; padding: 3px 10px; border-radius: 6px;
+             background: #e8f0fe; color: #1a56db; }
+  </style>
+</head>
+<body>
+  <h1>3 havo scheikunde</h1>
+  <p>Overzicht van alle oefenmaterialen</p>
+
+  <div class="section">Hoofdstuk 3 — Reactievergelijkingen</div>
+  <a class="card" href="index.html">
+    <div>
+      <div class="card-title">Quiz H3</div>
+      <div class="card-sub">Reactievergelijkingen oefenen</div>
+    </div>
+    <span class="badge">Quiz</span>
+  </a>
+
+</body>
+</html>
