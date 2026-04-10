@@ -7,21 +7,22 @@
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #fdf6ee;
+  --bg: #f0f4ff;
   --card: #ffffff;
   --flame: #e8470a;
   --flame2: #f5a623;
-  --smoke: #6b7280;
-  --text: #1a1207;
-  --muted: #9ca3af;
-  --border: #e5d9c8;
-  --correct: #16a34a;
-  --correct-bg: #f0fdf4;
-  --wrong: #dc2626;
-  --wrong-bg: #fef2f2;
-  --incomplete-accent: #7c3aed;
-  --incomplete-bg: #faf5ff;
-  --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  --blue: #1d6ef5;
+  --blue2: #38bdf8;
+  --smoke: #374151;
+  --text: #111827;
+  --muted: #6b7280;
+  --border: #c7d2e8;
+  --correct: #15803d;
+  --correct-bg: #dcfce7;
+  --wrong: #b91c1c;
+  --wrong-bg: #fee2e2;
+  --incomplete-accent: #6d28d9;
+  --shadow: 0 4px 20px rgba(0,0,0,0.10);
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -32,13 +33,13 @@ body {
   color: var(--text);
   min-height: 100vh;
   padding: 0 0 60px;
-  font-size: 20px;
+  font-size: 22px;
 }
 
 /* ── Header ── */
 .hero {
-  background: linear-gradient(135deg, #1a0a00 0%, #3d1500 50%, #1a0a00 100%);
-  padding: 36px 24px 32px;
+  background: linear-gradient(160deg, #070d1f 0%, #0a1a3a 40%, #0c0600 100%);
+  padding: 44px 24px 40px;
   text-align: center;
   position: relative;
   overflow: hidden;
@@ -48,24 +49,46 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 50% 120%, rgba(232,71,10,0.4) 0%, transparent 70%);
+  background:
+    radial-gradient(ellipse at 30% 100%, rgba(232,71,10,0.35) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 100%, rgba(29,110,245,0.35) 0%, transparent 55%);
 }
 
-.flame-icon {
-  font-size: 2.8rem;
-  display: block;
-  margin-bottom: 8px;
+/* ── Blue flame SVG ── */
+.flames {
   position: relative;
-  animation: flicker 1.8s ease-in-out infinite alternate;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 12px;
+  height: 72px;
 }
 
-@keyframes flicker {
-  0%   { transform: scaleY(1) rotate(-1deg); }
-  100% { transform: scaleY(1.06) rotate(1deg); }
+.flame-svg {
+  width: 44px;
+  height: 72px;
+  transform-origin: bottom center;
+}
+
+.flame-svg.orange { animation: flicker-o 1.6s ease-in-out infinite alternate; }
+.flame-svg.blue   { animation: flicker-b 1.9s ease-in-out infinite alternate; }
+.flame-svg.small  { width: 30px; height: 52px; animation: flicker-s 1.4s ease-in-out infinite alternate; }
+
+@keyframes flicker-o {
+  0%   { transform: scaleY(1) rotate(-2deg) scaleX(0.95); }
+  100% { transform: scaleY(1.1) rotate(2deg) scaleX(1.05); }
+}
+@keyframes flicker-b {
+  0%   { transform: scaleY(1.05) rotate(1.5deg) scaleX(1); }
+  100% { transform: scaleY(0.92) rotate(-2deg) scaleX(0.96); }
+}
+@keyframes flicker-s {
+  0%   { transform: scaleY(0.9) rotate(2deg); opacity: 0.85; }
+  100% { transform: scaleY(1.08) rotate(-1deg); opacity: 1; }
 }
 
 .hero h1 {
-  font-size: 1.9rem;
+  font-size: 2.4rem;
   font-weight: 900;
   color: #fff;
   position: relative;
@@ -76,63 +99,49 @@ body {
 .hero h1 span { color: var(--flame2); }
 
 .hero p {
-  color: rgba(255,255,255,0.55);
-  font-size: 1rem;
-  margin-top: 8px;
+  color: rgba(255,255,255,0.65);
+  font-size: 1.1rem;
+  margin-top: 10px;
   position: relative;
 }
 
 /* ── Phase tabs ── */
 .phase-bar {
   display: flex;
-  max-width: 680px;
+  max-width: 780px;
   margin: 0 auto;
-  border-bottom: 2px solid var(--border);
+  border-bottom: 3px solid var(--border);
   background: var(--card);
-  padding: 0 16px;
+  padding: 0 20px;
 }
 
 .phase-tab {
   flex: 1;
-  padding: 14px 8px;
+  padding: 16px 8px;
   font-family: 'Outfit', sans-serif;
-  font-size: 1rem;
+  font-size: 1.1rem;
   font-weight: 700;
   border: none;
   background: transparent;
   cursor: pointer;
   color: var(--muted);
-  border-bottom: 3px solid transparent;
-  margin-bottom: -2px;
+  border-bottom: 4px solid transparent;
+  margin-bottom: -3px;
   transition: all 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 8px;
 }
 
-.phase-tab.active {
-  color: var(--flame);
-  border-bottom-color: var(--flame);
-}
-
-.phase-tab.done {
-  color: var(--correct);
-}
-
-.phase-tab .badge {
-  background: var(--correct);
-  color: white;
-  font-size: 0.65rem;
-  border-radius: 10px;
-  padding: 1px 6px;
-}
+.phase-tab.active { color: var(--flame); border-bottom-color: var(--flame); }
+.phase-tab.done   { color: var(--correct); }
 
 /* ── Main content ── */
 .main {
-  max-width: 680px;
+  max-width: 780px;
   margin: 0 auto;
-  padding: 24px 16px;
+  padding: 28px 20px;
 }
 
 /* ── Progress ── */
@@ -140,193 +149,202 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   font-size: 1rem;
   font-family: 'JetBrains Mono', monospace;
-  color: var(--muted);
+  color: var(--smoke);
+  font-weight: 600;
 }
 
 .progress-track {
-  height: 5px;
+  height: 8px;
   background: var(--border);
-  border-radius: 3px;
-  margin-bottom: 20px;
+  border-radius: 4px;
+  margin-bottom: 24px;
   overflow: hidden;
 }
 
 .progress-fill {
   height: 100%;
   background: linear-gradient(90deg, var(--flame), var(--flame2));
-  border-radius: 3px;
+  border-radius: 4px;
   transition: width 0.5s ease;
 }
 
 /* ── Question card ── */
 .q-card {
   background: var(--card);
-  border: 1.5px solid var(--border);
-  border-radius: 16px;
-  padding: 24px;
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  padding: 30px;
   box-shadow: var(--shadow);
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .q-type-label {
   font-size: 0.85rem;
-  font-weight: 700;
+  font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 2px;
+  letter-spacing: 2.5px;
   color: var(--flame);
-  margin-bottom: 12px;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .q-type-label.incomplete { color: var(--incomplete-accent); }
 
 /* ── Equation display ── */
 .equation-wrap {
-  background: #1a0a00;
-  border-radius: 12px;
-  padding: 20px 16px;
-  margin-bottom: 20px;
+  background: #060e22;
+  border-radius: 14px;
+  padding: 28px 20px;
+  margin-bottom: 28px;
   overflow-x: auto;
+  border: 2px solid #1e3a6e;
 }
 
 .equation {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 14px;
   flex-wrap: wrap;
   font-family: 'JetBrains Mono', monospace;
-  font-size: 1.4rem;
+  font-size: 1.7rem;
   color: #fff;
-  white-space: nowrap;
 }
 
 .eq-term {
   display: flex;
   align-items: baseline;
-  gap: 2px;
+  gap: 3px;
 }
 
 .eq-coeff {
-  font-size: 1.4rem;
-  font-weight: 600;
+  font-size: 1.7rem;
+  font-weight: 700;
 }
 
 .eq-coeff.blank {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 38px;
-  height: 34px;
-  background: rgba(245,166,35,0.15);
-  border: 1.5px dashed var(--flame2);
-  border-radius: 6px;
+  min-width: 46px;
+  height: 42px;
+  background: rgba(56,189,248,0.12);
+  border: 2px dashed var(--blue2);
+  border-radius: 8px;
+  color: var(--blue2);
+  font-size: 1.4rem;
+  padding: 0 10px;
+}
+
+.eq-coeff.blank.answered-pending {
+  background: rgba(245,166,35,0.2);
+  border-color: var(--flame2);
+  border-style: solid;
   color: var(--flame2);
-  font-size: 1.2rem;
-  padding: 0 8px;
 }
 
 .eq-coeff.blank.answered-correct {
-  background: rgba(22,163,74,0.2);
-  border-color: #16a34a;
-  color: #16a34a;
+  background: rgba(21,128,61,0.25);
+  border-color: #22c55e;
   border-style: solid;
+  color: #22c55e;
 }
 
 .eq-coeff.blank.answered-wrong {
-  background: rgba(220,38,38,0.2);
-  border-color: #dc2626;
-  color: #dc2626;
+  background: rgba(185,28,28,0.25);
+  border-color: #f87171;
   border-style: solid;
+  color: #f87171;
 }
 
 .eq-formula {
-  font-size: 1rem;
-  color: rgba(255,255,255,0.85);
+  font-size: 1.5rem;
+  color: rgba(255,255,255,0.9);
 }
 
-.eq-formula sub { font-size: 0.65em; }
+.eq-formula sub { font-size: 0.62em; }
 
 .eq-arrow {
   color: var(--flame2);
-  font-size: 1.3rem;
-  padding: 0 4px;
+  font-size: 1.8rem;
+  padding: 0 6px;
+  font-weight: 700;
 }
 
 .eq-plus {
-  color: rgba(255,255,255,0.4);
-  font-size: 1.1rem;
+  color: rgba(255,255,255,0.45);
+  font-size: 1.5rem;
 }
-
-.eq-coeff.fixed { color: rgba(255,255,255,0.9); }
 
 /* ── Instruction ── */
 .q-instruction {
-  font-size: 0.85rem;
+  font-size: 1rem;
   color: var(--smoke);
-  margin-bottom: 14px;
-  line-height: 1.5;
-}
-
-.blank-label {
-  font-family: 'JetBrains Mono', monospace;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--flame2);
-  background: rgba(245,166,35,0.1);
-  border-radius: 4px;
-  padding: 1px 6px;
-  margin: 0 2px;
+  margin-bottom: 20px;
+  line-height: 1.6;
 }
 
 /* ── Choices grid ── */
 .choices-group {
-  margin-bottom: 14px;
+  margin-bottom: 20px;
+  background: #f8faff;
+  border-radius: 12px;
+  padding: 14px 16px;
+  border: 1.5px solid var(--border);
 }
 
 .choices-label {
-  font-size: 0.78rem;
+  font-size: 0.9rem;
   font-weight: 700;
-  color: var(--muted);
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  margin-bottom: 8px;
+  color: var(--smoke);
+  margin-bottom: 10px;
   font-family: 'JetBrains Mono', monospace;
 }
 
 .choices {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
 }
 
 .choice-btn {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 1rem;
-  font-weight: 600;
-  padding: 10px 20px;
-  border-radius: 8px;
-  border: 1.5px solid var(--border);
-  background: var(--bg);
+  font-size: 1.2rem;
+  font-weight: 700;
+  padding: 12px 26px;
+  border-radius: 10px;
+  border: 2px solid var(--border);
+  background: #fff;
   color: var(--text);
   cursor: pointer;
   transition: all 0.15s;
-  min-width: 52px;
+  min-width: 62px;
   text-align: center;
 }
 
 .choice-btn:hover:not(:disabled) {
-  border-color: var(--flame);
-  background: #fff5f0;
-  color: var(--flame);
+  border-color: var(--blue);
+  background: #eff6ff;
+  color: var(--blue);
+}
+
+.choice-btn.selected {
+  background: #eff6ff;
+  border-color: var(--blue);
+  color: var(--blue);
+  box-shadow: 0 0 0 3px rgba(29,110,245,0.15);
 }
 
 .choice-btn.correct {
   background: var(--correct-bg);
   border-color: var(--correct);
   color: var(--correct);
+  font-weight: 800;
 }
 
 .choice-btn.wrong {
@@ -337,66 +355,67 @@ body {
 
 .choice-btn:disabled { cursor: default; }
 
-.choice-btn.selected {
-  background: #fff5f0;
-  border-color: var(--flame);
-  color: var(--flame);
-}
-
-.eq-coeff.blank.answered-pending {
-  background: rgba(245,166,35,0.25);
-  border-color: var(--flame2);
-  border-style: solid;
-  color: var(--flame2);
-}
+/* ── Check button ── */
 .check-btn {
   font-family: 'Outfit', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  padding: 12px 28px;
-  border-radius: 10px;
+  font-size: 1.15rem;
+  font-weight: 800;
+  padding: 14px 36px;
+  border-radius: 12px;
   border: none;
-  background: var(--flame);
+  background: linear-gradient(135deg, var(--flame), var(--flame2));
   color: white;
   cursor: pointer;
-  margin-top: 4px;
-  margin-bottom: 12px;
+  margin-top: 8px;
+  margin-bottom: 14px;
   transition: all 0.15s;
-  box-shadow: 0 3px 10px rgba(232,71,10,0.25);
+  box-shadow: 0 4px 16px rgba(232,71,10,0.35);
+  letter-spacing: 0.3px;
 }
 
-.check-btn:hover:not(:disabled) { background: #c73d08; }
-.check-btn:disabled { background: var(--border); color: var(--muted); cursor: default; box-shadow: none; }
+.check-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(232,71,10,0.45);
+}
+
+.check-btn:disabled {
+  background: var(--border);
+  color: var(--muted);
+  cursor: default;
+  box-shadow: none;
+  transform: none;
+}
 
 /* ── Feedback ── */
 .feedback-bar {
-  min-height: 28px;
-  font-size: 0.88rem;
-  font-weight: 600;
-  padding: 6px 0;
+  min-height: 32px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  padding: 8px 0;
   color: transparent;
   transition: color 0.2s;
   line-height: 1.4;
 }
 
 .feedback-bar.correct { color: var(--correct); }
-.feedback-bar.wrong { color: var(--wrong); }
+.feedback-bar.wrong   { color: var(--wrong); }
 
 /* ── Uitleg box ── */
 .uitleg {
   display: none;
-  background: #f8f4ff;
-  border: 1.5px solid #d8b4fe;
-  border-radius: 10px;
-  padding: 14px 16px;
-  font-size: 0.85rem;
-  color: #4c1d95;
-  line-height: 1.6;
-  margin-top: 10px;
+  background: #eff6ff;
+  border: 2px solid #93c5fd;
+  border-radius: 12px;
+  padding: 16px 20px;
+  font-size: 1rem;
+  color: #1e3a8a;
+  line-height: 1.7;
+  margin-top: 12px;
+  font-family: 'JetBrains Mono', monospace;
 }
 
 .uitleg.show { display: block; }
-.uitleg strong { color: #7c3aed; }
+.uitleg strong { color: var(--blue); }
 
 /* ── Nav ── */
 .nav-row {
@@ -408,137 +427,333 @@ body {
 
 .nav-btn {
   font-family: 'Outfit', sans-serif;
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 700;
-  padding: 10px 24px;
+  padding: 12px 28px;
   border-radius: 30px;
-  border: 1.5px solid var(--border);
+  border: 2px solid var(--border);
   background: var(--card);
   color: var(--text);
   cursor: pointer;
   transition: all 0.15s;
 }
 
-.nav-btn:hover { border-color: var(--flame); color: var(--flame); }
+.nav-btn:hover { border-color: var(--blue); color: var(--blue); }
 .nav-btn:disabled { opacity: 0.3; cursor: default; }
 
 .nav-btn.primary {
-  background: var(--flame);
+  background: linear-gradient(135deg, var(--blue), #0ea5e9);
   color: white;
-  border-color: var(--flame);
+  border-color: transparent;
+  box-shadow: 0 4px 14px rgba(29,110,245,0.35);
 }
 
-.nav-btn.primary:hover { background: #c73d08; border-color: #c73d08; color: white; }
+.nav-btn.primary:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(29,110,245,0.45);
+}
 
 /* ── Score screen ── */
 .score-screen {
   display: none;
   text-align: center;
-  padding: 40px 20px;
+  padding: 48px 20px;
 }
 
 .score-screen.show { display: block; }
 
 .score-circle {
-  width: 120px;
-  height: 120px;
+  width: 140px;
+  height: 140px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--flame), var(--flame2));
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  margin: 0 auto 20px;
-  box-shadow: 0 8px 32px rgba(232,71,10,0.3);
+  margin: 0 auto 24px;
+  box-shadow: 0 10px 40px rgba(232,71,10,0.35);
 }
 
 .score-big {
-  font-size: 2.2rem;
+  font-size: 2.8rem;
   font-weight: 900;
   color: white;
   line-height: 1;
   font-family: 'JetBrains Mono', monospace;
 }
 
-.score-sub { color: rgba(255,255,255,0.8); font-size: 0.75rem; }
+.score-sub { color: rgba(255,255,255,0.8); font-size: 0.9rem; }
 
 .score-title {
-  font-size: 1.4rem;
+  font-size: 1.7rem;
   font-weight: 900;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
 }
 
 .score-msg {
-  color: var(--muted);
-  font-size: 0.9rem;
-  margin-bottom: 28px;
+  color: var(--smoke);
+  font-size: 1.05rem;
+  margin-bottom: 32px;
 }
 
 .score-breakdown {
   background: var(--card);
-  border: 1.5px solid var(--border);
-  border-radius: 12px;
-  padding: 16px;
-  margin-bottom: 20px;
+  border: 2px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+  margin-bottom: 24px;
   text-align: left;
 }
 
 .breakdown-row {
   display: flex;
   justify-content: space-between;
-  padding: 6px 0;
-  font-size: 0.85rem;
+  padding: 10px 0;
+  font-size: 1rem;
   border-bottom: 1px solid var(--border);
 }
 
 .breakdown-row:last-child { border-bottom: none; }
 
 .restart-btn {
-  background: var(--flame);
+  background: linear-gradient(135deg, var(--flame), var(--flame2));
   color: white;
   font-family: 'Outfit', sans-serif;
-  font-size: 1rem;
-  font-weight: 700;
-  padding: 14px 40px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  padding: 16px 48px;
   border: none;
   border-radius: 30px;
   cursor: pointer;
-  box-shadow: 0 4px 16px rgba(232,71,10,0.3);
+  box-shadow: 0 6px 20px rgba(232,71,10,0.35);
 }
 
-/* ── Phase intro ── */
-.phase-intro {
-  background: var(--card);
-  border: 1.5px solid var(--border);
-  border-radius: 16px;
-  padding: 24px;
-  margin-bottom: 20px;
+/* ── Name screen ── */
+#name-screen {
+  max-width: 780px;
+  margin: 0 auto;
+  padding: 48px 20px;
   text-align: center;
 }
 
-.phase-intro h2 { font-size: 1.2rem; font-weight: 800; margin-bottom: 8px; }
-.phase-intro p { color: var(--smoke); font-size: 0.88rem; line-height: 1.6; }
-.phase-intro .rule-box {
-  background: var(--bg);
-  border-radius: 10px;
-  padding: 12px 16px;
-  margin-top: 14px;
-  font-size: 0.82rem;
+.name-card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  padding: 40px 36px;
+  box-shadow: var(--shadow);
+  display: inline-block;
+  width: 100%;
+  max-width: 480px;
+}
+
+.name-card h2 {
+  font-size: 1.6rem;
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.name-card p {
+  color: var(--smoke);
+  font-size: 1rem;
+  margin-bottom: 28px;
+}
+
+.name-input {
+  width: 100%;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  padding: 14px 20px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  outline: none;
   color: var(--text);
+  background: var(--bg);
+  margin-bottom: 16px;
+  transition: border-color 0.15s;
+}
+
+.name-input:focus { border-color: var(--blue); }
+
+.start-btn {
+  width: 100%;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--blue), #0ea5e9);
+  color: white;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(29,110,245,0.35);
+  transition: all 0.15s;
+}
+
+.start-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(29,110,245,0.45); }
+.start-btn:disabled { opacity: 0.4; cursor: default; transform: none; }
+
+/* ── Leaderboard ── */
+.leaderboard {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  padding: 28px;
+  margin-top: 28px;
   text-align: left;
-  line-height: 1.8;
+  box-shadow: var(--shadow);
+}
+
+.leaderboard h3 {
+  font-size: 1.2rem;
+  font-weight: 900;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lb-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin-bottom: 6px;
+  font-size: 1rem;
+  transition: background 0.1s;
+}
+
+.lb-row:nth-child(odd) { background: var(--bg); }
+
+.lb-rank {
   font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 1rem;
+  width: 28px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.lb-row.gold   .lb-rank { color: #d97706; }
+.lb-row.silver .lb-rank { color: #6b7280; }
+.lb-row.bronze .lb-rank { color: #92400e; }
+
+.lb-name {
+  flex: 1;
+  font-weight: 700;
+}
+
+.lb-name.me { color: var(--blue); }
+
+.lb-score {
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--smoke);
+}
+
+.lb-pct {
+  font-size: 0.85rem;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+  min-width: 44px;
+  text-align: right;
+}
+
+.lb-empty {
+  color: var(--muted);
+  font-size: 0.95rem;
+  padding: 12px 0;
+  text-align: center;
+}
+
+.lb-clear {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 0.8rem;
+  padding: 5px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 12px;
+  font-family: 'Outfit', sans-serif;
+}
+
+.lb-clear:hover { color: var(--wrong); border-color: var(--wrong); }
+.phase-intro {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 20px;
+  padding: 28px;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.phase-intro h2 { font-size: 1.5rem; font-weight: 900; margin-bottom: 10px; }
+.phase-intro p  { color: var(--smoke); font-size: 1rem; line-height: 1.7; }
+.phase-intro .rule-box {
+  background: #060e22;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-top: 16px;
+  font-size: 1rem;
+  color: #e2e8f0;
+  text-align: left;
+  line-height: 2;
+  font-family: 'JetBrains Mono', monospace;
+  border: 1.5px solid #1e3a6e;
 }
 </style>
 </head>
 <body>
 
 <div class="hero">
-  <span class="flame-icon">🔥</span>
+  <div class="flames" style="position:relative;z-index:1">
+    <!-- kleine oranje vlam links -->
+    <svg class="flame-svg small orange" viewBox="0 0 40 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 68 C8 55 2 44 6 32 C8 24 14 20 14 20 C12 30 18 34 20 28 C22 20 18 10 22 2 C28 12 32 22 30 34 C36 26 34 16 34 16 C42 28 36 48 20 68Z" fill="url(#og1)"/>
+      <defs><linearGradient id="og1" x1="20" y1="2" x2="20" y2="68" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fff7aa"/><stop offset="40%" stop-color="#f5a623"/><stop offset="100%" stop-color="#e8470a"/></linearGradient></defs>
+    </svg>
+    <!-- blauwe vlam midden -->
+    <svg class="flame-svg blue" viewBox="0 0 44 76" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M22 74 C6 58 0 44 4 28 C7 16 14 10 14 10 C11 24 18 30 20 22 C23 12 19 4 24 0 C30 10 36 22 33 36 C40 26 37 14 37 14 C47 30 40 52 22 74Z" fill="url(#bl1)"/>
+      <path d="M22 74 C10 60 8 48 12 36 C14 28 20 24 20 24 C18 32 22 36 24 30 C26 22 24 14 27 8 C32 18 34 30 30 40 C36 32 34 22 34 22 C40 34 36 54 22 74Z" fill="url(#bl2)" opacity="0.7"/>
+      <defs>
+        <linearGradient id="bl1" x1="22" y1="0" x2="22" y2="74" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#e0f2fe"/><stop offset="35%" stop-color="#38bdf8"/><stop offset="70%" stop-color="#1d6ef5"/><stop offset="100%" stop-color="#1e3a8a"/></linearGradient>
+        <linearGradient id="bl2" x1="22" y1="8" x2="22" y2="74" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#ffffff" stop-opacity="0.9"/><stop offset="100%" stop-color="#7dd3fc" stop-opacity="0.3"/></linearGradient>
+      </defs>
+    </svg>
+    <!-- kleine oranje vlam rechts -->
+    <svg class="flame-svg small orange" viewBox="0 0 40 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20 68 C8 55 2 44 6 32 C8 24 14 20 14 20 C12 30 18 34 20 28 C22 20 18 10 22 2 C28 12 32 22 30 34 C36 26 34 16 34 16 C42 28 36 48 20 68Z" fill="url(#og2)"/>
+      <defs><linearGradient id="og2" x1="20" y1="2" x2="20" y2="68" gradientUnits="userSpaceOnUse"><stop offset="0%" stop-color="#fff7aa"/><stop offset="40%" stop-color="#f5a623"/><stop offset="100%" stop-color="#e8470a"/></linearGradient></defs>
+    </svg>
+  </div>
   <h1>Verbrandings<span>reacties</span></h1>
   <p>Maak de reactievergelijking kloppend — kies de juiste coëfficiënten</p>
 </div>
 
+<!-- ── Naam scherm ── -->
+<div id="name-screen">
+  <div class="name-card">
+    <h2>👋 Welkom!</h2>
+    <p>Vul je naam in om te beginnen. Je score wordt opgeslagen op het scorebord.</p>
+    <input class="name-input" id="name-input" type="text" placeholder="Jouw naam..." maxlength="30"
+      oninput="document.getElementById('start-btn').disabled = this.value.trim().length < 2"
+      onkeydown="if(event.key==='Enter') startQuiz()">
+    <button class="start-btn" id="start-btn" onclick="startQuiz()" disabled>Start de quiz →</button>
+  </div>
+  <div class="leaderboard" id="leaderboard-home">
+    <h3>🏆 Scorebord</h3>
+    <div id="lb-list-home"><div class="lb-empty">Nog geen scores opgeslagen.</div></div>
+    <button class="lb-clear" onclick="clearScores()">Scorebord wissen</button>
+  </div>
+</div>
+
+<div id="quiz-wrapper" style="display:none">
 <div class="phase-bar">
   <button class="phase-tab active" id="tab-vol" onclick="jumpPhase(0)">🔥 Volledig</button>
   <button class="phase-tab" id="tab-onvol" onclick="jumpPhase(1)">💨 Onvolledig</button>
@@ -553,9 +768,7 @@ body {
     <div class="progress-fill" id="prog-fill" style="width:0%"></div>
   </div>
 
-  <div id="quiz-area">
-    <!-- question rendered here -->
-  </div>
+  <div id="quiz-area"></div>
 
   <div class="score-screen" id="score-screen">
     <div class="score-circle">
@@ -565,8 +778,15 @@ body {
     <div class="score-title" id="final-title">Goed gedaan!</div>
     <div class="score-msg" id="final-msg"></div>
     <div class="score-breakdown" id="breakdown"></div>
-    <button class="restart-btn" onclick="restart()">🔄 Opnieuw</button>
+    <div class="leaderboard" id="leaderboard-end" style="text-align:left;margin-bottom:24px">
+      <h3>🏆 Scorebord</h3>
+      <div id="lb-list-end"></div>
+    </div>
+    <button class="restart-btn" onclick="restart()">🔄 Opnieuw spelen</button>
+    <br><br>
+    <button class="nav-btn" onclick="goHome()" style="margin-top:8px">← Terug naar begin</button>
   </div>
+</div>
 </div>
 
 <script>
@@ -992,7 +1212,7 @@ function updateTabs() {
   document.getElementById('tab-onvol').className = 'phase-tab' + (qIdx >= PHASES[0].questions.length && qIdx < allQ.length ? ' active' : (p0done && qIdx >= allQ.length ? ' done' : ''));
 }
 
-function showScore() {
+async function showScore() {
   document.getElementById('quiz-area').style.display = 'none';
   document.getElementById('score-screen').classList.add('show');
 
@@ -1019,25 +1239,145 @@ function showScore() {
     <div class="breakdown-row"><span>🔥 Volledige verbranding</span><span>${phaseScores[0]} / ${p0total}</span></div>
     <div class="breakdown-row"><span>💨 Onvolledige verbranding</span><span>${phaseScores[1]} / ${p1total}</span></div>
     <div class="breakdown-row"><span><strong>Totaal</strong></span><span><strong>${score} / ${maxScore}</strong></span></div>`;
+
+  // Save score and render leaderboard
+  await saveScore(score, maxScore);
+  renderLeaderboard('lb-list-end');
 }
 
 function restart() {
   qIdx = 0; score = 0; phaseScores = [0,0];
-  document.getElementById('score-live').textContent = 'Score: 0';
+  document.getElementById('score-live').textContent = `Score: 0 — ${currentName}`;
   document.getElementById('score-screen').classList.remove('show');
   document.getElementById('quiz-area').style.display = '';
   renderQuestion();
+}
+
+function goHome() {
+  document.getElementById('quiz-wrapper').style.display = 'none';
+  document.getElementById('name-screen').style.display = '';
+  renderLeaderboard('lb-list-home');
+}
+
+// ─────────────────────────────────────────────
+// NAME + SHARED LEADERBOARD via JSONBin.io
+// ─────────────────────────────────────────────
+// ➤ SETUP (eenmalig, gratis):
+//   1. Ga naar https://jsonbin.io en maak een gratis account
+//   2. Maak een nieuwe Bin aan met inhoud: []
+//   3. Kopieer de Bin ID en je Master Key hieronder
+// ─────────────────────────────────────────────
+const JSONBIN_ID  = '69d8ed0436566621a89b0146';       // bijv. 6650abc123def456
+const JSONBIN_KEY = '$2a$10$MyGVM0ANs86vLveZMzFVX.WbFi8bK7nUBz5RNV20fv707j4LkmEZO';    // bijv. $2a$10$...
+
+let currentName = '';
+let cachedScores = [];
+
+async function fetchScores() {
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_KEY }
+    });
+    const data = await res.json();
+    cachedScores = Array.isArray(data.record?.scores) ? data.record.scores : [];
+  } catch (e) {
+    console.warn('Scorebord ophalen mislukt:', e);
+    cachedScores = [];
+  }
+  return cachedScores;
+}
+
+async function saveScore(sc, max) {
+  const pct = Math.round(sc / max * 100);
+  const entry = { name: currentName, score: sc, max, pct, date: new Date().toLocaleDateString('nl-NL') };
+
+  let scores = await fetchScores();
+  const best = {};
+  [...scores, entry].forEach(s => {
+    if (!best[s.name] || s.pct > best[s.name].pct) best[s.name] = s;
+  });
+  const sorted = Object.values(best).sort((a,b) => b.pct - a.pct || b.score - a.score);
+
+  try {
+    await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
+      body: JSON.stringify({ scores: sorted })
+    });
+    cachedScores = sorted;
+  } catch (e) {
+    console.warn('Score opslaan mislukt:', e);
+  }
+}
+
+function renderLeaderboard(containerId) {
+  const el = document.getElementById(containerId);
+  if (!el) return;
+  const scores = cachedScores;
+  if (!scores || scores.length === 0) {
+    el.innerHTML = '<div class="lb-empty">Nog geen scores opgeslagen.</div>';
+    return;
+  }
+  const medals = ['🥇','🥈','🥉'];
+  const rankClass = ['gold','silver','bronze'];
+  el.innerHTML = scores.map((s, i) => {
+    const isMe = s.name === currentName;
+    const medal = i < 3 ? medals[i] : `${i+1}.`;
+    const rc = i < 3 ? rankClass[i] : '';
+    return `<div class="lb-row ${rc}">
+      <span class="lb-rank">${medal}</span>
+      <span class="lb-name ${isMe ? 'me' : ''}">${s.name}${isMe ? ' ← jij' : ''}</span>
+      <span class="lb-score">${s.score}/${s.max}</span>
+      <span class="lb-pct">${s.pct}%</span>
+    </div>`;
+  }).join('');
+}
+
+async function clearScores() {
+  if (!confirm('Scorebord wissen voor alle leerlingen?')) return;
+  try {
+    await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
+      body: JSON.stringify({ scores: [] })
+    });
+    cachedScores = [];
+    renderLeaderboard('lb-list-home');
+  } catch (e) { alert('Wissen mislukt.'); }
+}
+
+function startQuiz() {
+  const name = document.getElementById('name-input').value.trim();
+  if (name.length < 2) return;
+  currentName = name;
+  document.getElementById('name-screen').style.display = 'none';
+  document.getElementById('quiz-wrapper').style.display = '';
+  document.getElementById('score-live').textContent = `Score: 0 — ${currentName}`;
+  buildAllQ();
+  PHASES.forEach((ph, pi) => {
+    phaseTotals[pi] = ph.questions.reduce((s,q)=>s+q.blanks.length,0);
+  });
+  qIdx = 0; score = 0; phaseScores = [0,0];
+  renderQuestion();
+}
+
+function goHome() {
+  document.getElementById('quiz-wrapper').style.display = 'none';
+  document.getElementById('name-screen').style.display = '';
+  fetchScores().then(() => renderLeaderboard('lb-list-home'));
 }
 
 // ─────────────────────────────────────────────
 // INIT
 // ─────────────────────────────────────────────
 buildAllQ();
-// compute phase totals
 PHASES.forEach((ph, pi) => {
   phaseTotals[pi] = ph.questions.reduce((s,q)=>s+q.blanks.length,0);
 });
-renderQuestion();
+
+// Load leaderboard on startup
+document.getElementById('lb-list-home').innerHTML = '<div class="lb-empty">Scorebord laden...</div>';
+fetchScores().then(() => renderLeaderboard('lb-list-home'));
 </script>
 </body>
 </html>
