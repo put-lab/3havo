@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Enquête — Digitaal oefenen scheikunde</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #f0f4ff;
+  --card: #ffffff;
+  --blue: #1d6ef5;
+  --blue2: #38bdf8;
+  --text: #111827;
+  --smoke: #374151;
+  --muted: #6b7280;
+  --border: #c7d2e8;
+  --shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  font-size: 18px;
+  padding-bottom: 60px;
+}
+
+.hero {
+  background: linear-gradient(160deg, #070d1f 0%, #0a1a3a 60%, #070d1f 100%);
+  padding: 40px 24px 36px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 50% 120%, rgba(29,110,245,0.3) 0%, transparent 65%);
+}
+.hero-icon { font-size: 2.4rem; display: block; margin-bottom: 10px; position: relative; }
+.hero h1 { font-size: 1.8rem; font-weight: 900; color: #fff; position: relative; line-height: 1.2; }
+.hero h1 span { color: var(--blue2); }
+.hero p { color: rgba(255,255,255,0.6); font-size: 0.95rem; margin-top: 8px; position: relative; }
+
+.progress-wrap {
+  background: var(--card);
+  border-bottom: 2px solid var(--border);
+  padding: 10px 20px;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+.progress-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.progress-track { flex: 1; height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--blue2)); border-radius: 3px; width: 0%; transition: width 0.4s ease; }
+.progress-label { font-size: 0.82rem; font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--muted); white-space: nowrap; }
+
+.main { max-width: 680px; margin: 0 auto; padding: 32px 20px; }
+
+.name-card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  padding: 22px 26px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+}
+.name-card label { font-weight: 700; font-size: 1rem; display: block; margin-bottom: 10px; color: var(--smoke); }
+.name-input {
+  width: 100%;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 12px 16px;
+  border: 2px solid var(--border);
+  border-radius: 10px;
+  outline: none;
+  color: var(--text);
+  background: var(--bg);
+  transition: border-color 0.15s;
+}
+.name-input:focus { border-color: var(--blue); }
+
+.section-title {
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 2.5px;
+  color: var(--blue);
+  margin: 32px 0 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.section-title::after { content: ''; flex: 1; height: 2px; background: var(--border); border-radius: 1px; }
+
+.q-card {
+  background: var(--card);
+  border: 2px solid var(--border);
+  border-radius: 16px;
+  padding: 22px 24px;
+  margin-bottom: 16px;
+  box-shadow: var(--shadow);
+  transition: border-color 0.15s;
+}
+.q-card.answered { border-color: #93c5fd; }
+.q-card.error { border-color: #f87171; }
+
+.q-num { font-size: 0.75rem; font-weight: 700; font-family: 'JetBrains Mono', monospace; color: var(--muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1px; }
+.q-text { font-size: 1.05rem; font-weight: 600; color: var(--text); line-height: 1.5; margin-bottom: 16px; }
+.q-sub { font-size: 0.88rem; font-weight: 400; color: var(--muted); margin-top: 4px; }
+
+/* Likert */
+.likert { display: flex; gap: 10px; flex-wrap: wrap; align-items: flex-end; }
+.likert-opt { display: flex; flex-direction: column; align-items: center; gap: 6px; cursor: pointer; }
+.likert-opt input[type=radio] { display: none; }
+.likert-circle {
+  width: 46px; height: 46px; border-radius: 50%;
+  border: 2px solid var(--border);
+  background: var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'JetBrains Mono', monospace;
+  font-weight: 700; font-size: 1rem; color: var(--muted);
+  transition: all 0.15s; cursor: pointer;
+}
+.likert-opt input:checked + .likert-circle {
+  background: var(--blue); border-color: var(--blue); color: white;
+  box-shadow: 0 3px 10px rgba(29,110,245,0.3);
+}
+.likert-opt:hover .likert-circle { border-color: var(--blue); color: var(--blue); }
+.likert-ends { display: flex; justify-content: space-between; font-size: 0.78rem; color: var(--muted); margin-top: 6px; font-style: italic; }
+
+/* MC */
+.mc-options { display: flex; flex-direction: column; gap: 8px; }
+.mc-opt {
+  display: flex; align-items: center; gap: 12px;
+  padding: 11px 16px;
+  border: 2px solid var(--border); border-radius: 10px;
+  cursor: pointer; transition: all 0.15s;
+  font-size: 0.98rem; font-weight: 500; background: var(--bg);
+}
+.mc-opt:hover { border-color: var(--blue); background: #eff6ff; }
+.mc-opt input { display: none; }
+.mc-dot { width: 20px; height: 20px; border-radius: 50%; border: 2px solid var(--border); flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+.mc-sq  { width: 20px; height: 20px; border-radius: 5px; border: 2px solid var(--border); flex-shrink: 0; transition: all 0.15s; display: flex; align-items: center; justify-content: center; }
+.mc-opt.selected { border-color: var(--blue); background: #eff6ff; }
+.mc-opt.selected .mc-dot { background: var(--blue); border-color: var(--blue); }
+.mc-opt.selected .mc-dot::after { content: ''; width: 8px; height: 8px; background: white; border-radius: 50%; display: block; }
+.mc-opt.selected .mc-sq { background: var(--blue); border-color: var(--blue); }
+.mc-opt.selected .mc-sq::after { content: '✓'; color: white; font-size: 0.75rem; font-weight: 700; }
+
+/* Open */
+.open-input {
+  width: 100%; font-family: 'Outfit', sans-serif; font-size: 1rem;
+  padding: 12px 14px; border: 2px solid var(--border); border-radius: 10px;
+  resize: vertical; min-height: 90px; outline: none;
+  color: var(--text); background: var(--bg); transition: border-color 0.15s; line-height: 1.5;
+}
+.open-input:focus { border-color: var(--blue); }
+
+/* Submit */
+.submit-wrap { margin-top: 32px; text-align: center; }
+.submit-btn {
+  font-family: 'Outfit', sans-serif; font-size: 1.1rem; font-weight: 800;
+  padding: 16px 52px; border: none; border-radius: 30px;
+  background: linear-gradient(135deg, var(--blue), #0ea5e9);
+  color: white; cursor: pointer;
+  box-shadow: 0 4px 16px rgba(29,110,245,0.35); transition: all 0.15s;
+}
+.submit-btn:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(29,110,245,0.45); }
+.required-note { font-size: 0.82rem; color: var(--muted); margin-top: 12px; }
+
+/* Bedankt */
+#thanks { display: none; text-align: center; padding: 60px 20px; max-width: 500px; margin: 0 auto; }
+#thanks .big-icon { font-size: 4rem; margin-bottom: 16px; }
+#thanks h2 { font-size: 1.8rem; font-weight: 900; margin-bottom: 10px; }
+#thanks p { color: var(--smoke); font-size: 1rem; line-height: 1.6; }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <span class="hero-icon">💻</span>
+  <h1>Wat vind jij van<br><span>digitaal oefenen?</span></h1>
+  <p>Korte enquête over de digitale oefening — jouw mening telt</p>
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-inner">
+    <div class="progress-track"><div class="progress-fill" id="prog-fill"></div></div>
+    <span class="progress-label" id="prog-label">0 / 8</span>
+  </div>
+</div>
+
+<div class="main" id="form-main">
+
+  <div class="name-card">
+    <label for="naam">Naam <span style="font-weight:400;color:var(--muted)">(optioneel)</span></label>
+    <input class="name-input" id="naam" type="text" placeholder="Jouw naam of laat leeg...">
+  </div>
+
+  <!-- SECTIE 1 -->
+  <div class="section-title">📖 Vergelijking met papier / boek</div>
+
+  <div class="q-card" id="qc-1" data-required="true">
+    <div class="q-num">Vraag 1 van 8</div>
+    <div class="q-text">Hoe leer je het liefst nieuwe stof oefenen?</div>
+    <div class="mc-options" id="q1">
+      <label class="mc-opt" onclick="selectMC(this,'q1','1')"><input type="radio" name="q1" value="boek"><span class="mc-dot"></span>Uit het boek (opgaven op papier)</label>
+      <label class="mc-opt" onclick="selectMC(this,'q1','1')"><input type="radio" name="q1" value="digitaal"><span class="mc-dot"></span>Digitale oefening op de computer/tablet</label>
+      <label class="mc-opt" onclick="selectMC(this,'q1','1')"><input type="radio" name="q1" value="mix"><span class="mc-dot"></span>Een mix van beide</label>
+      <label class="mc-opt" onclick="selectMC(this,'q1','1')"><input type="radio" name="q1" value="maakt_niet_uit"><span class="mc-dot"></span>Maakt mij niet uit</label>
+    </div>
+  </div>
+
+  <div class="q-card" id="qc-2" data-required="true">
+    <div class="q-num">Vraag 2 van 8</div>
+    <div class="q-text">De digitale oefening gaf direct feedback als je een antwoord invulde. Hoe nuttig vond je dat, vergeleken met zelf nakijken in het boek?</div>
+    <div class="likert" id="q2">
+      <label class="likert-opt"><input type="radio" name="q2" value="1"><span class="likert-circle">1</span></label>
+      <label class="likert-opt"><input type="radio" name="q2" value="2"><span class="likert-circle">2</span></label>
+      <label class="likert-opt"><input type="radio" name="q2" value="3"><span class="likert-circle">3</span></label>
+      <label class="likert-opt"><input type="radio" name="q2" value="4"><span class="likert-circle">4</span></label>
+      <label class="likert-opt"><input type="radio" name="q2" value="5"><span class="likert-circle">5</span></label>
+    </div>
+    <div class="likert-ends"><span>Minder nuttig dan boek</span><span>Veel nuttiger dan boek</span></div>
+  </div>
+
+  <div class="q-card" id="qc-3" data-required="true">
+    <div class="q-num">Vraag 3 van 8</div>
+    <div class="q-text">Bij deze oefening moest je een fout antwoord opnieuw invullen totdat het goed was. Wat vond je hiervan?</div>
+    <div class="mc-options" id="q3">
+      <label class="mc-opt" onclick="selectMC(this,'q3','3')"><input type="radio" name="q3" value="fijn"><span class="mc-dot"></span>Fijn — zo weet je zeker dat je het begrijpt</label>
+      <label class="mc-opt" onclick="selectMC(this,'q3','3')"><input type="radio" name="q3" value="ok"><span class="mc-dot"></span>Oké, maar soms ook frustrerend</label>
+      <label class="mc-opt" onclick="selectMC(this,'q3','3')"><input type="radio" name="q3" value="liever_doorgaan"><span class="mc-dot"></span>Ik had liever gewoon door kunnen gaan</label>
+      <label class="mc-opt" onclick="selectMC(this,'q3','3')"><input type="radio" name="q3" value="maakt_niet_uit"><span class="mc-dot"></span>Maakt mij niet uit</label>
+    </div>
+  </div>
+
+  <!-- SECTIE 2 -->
+  <div class="section-title">🧠 Leereffect</div>
+
+  <div class="q-card" id="qc-4" data-required="true">
+    <div class="q-num">Vraag 4 van 8</div>
+    <div class="q-text">Hoe zeker voel je je nu over het balanceren van verbrandingsreacties, na het doen van deze digitale oefening?</div>
+    <div class="likert" id="q4">
+      <label class="likert-opt"><input type="radio" name="q4" value="1"><span class="likert-circle">1</span></label>
+      <label class="likert-opt"><input type="radio" name="q4" value="2"><span class="likert-circle">2</span></label>
+      <label class="likert-opt"><input type="radio" name="q4" value="3"><span class="likert-circle">3</span></label>
+      <label class="likert-opt"><input type="radio" name="q4" value="4"><span class="likert-circle">4</span></label>
+      <label class="likert-opt"><input type="radio" name="q4" value="5"><span class="likert-circle">5</span></label>
+    </div>
+    <div class="likert-ends"><span>Helemaal niet zeker</span><span>Heel zeker</span></div>
+  </div>
+
+  <div class="q-card" id="qc-5" data-required="true">
+    <div class="q-num">Vraag 5 van 8</div>
+    <div class="q-text">Denk je dat je meer hebt geleerd van deze digitale oefening dan wanneer je dezelfde vragen uit het boek had gemaakt?</div>
+    <div class="mc-options" id="q5">
+      <label class="mc-opt" onclick="selectMC(this,'q5','5')"><input type="radio" name="q5" value="meer_digitaal"><span class="mc-dot"></span>Ja, ik heb meer geleerd van de digitale oefening</label>
+      <label class="mc-opt" onclick="selectMC(this,'q5','5')"><input type="radio" name="q5" value="even_veel"><span class="mc-dot"></span>Ongeveer even veel</label>
+      <label class="mc-opt" onclick="selectMC(this,'q5','5')"><input type="radio" name="q5" value="meer_boek"><span class="mc-dot"></span>Nee, ik had meer geleerd van het boek</label>
+      <label class="mc-opt" onclick="selectMC(this,'q5','5')"><input type="radio" name="q5" value="weet_niet"><span class="mc-dot"></span>Weet ik niet</label>
+    </div>
+  </div>
+
+  <!-- SECTIE 3 -->
+  <div class="section-title">⚡ Motivatie en betrokkenheid</div>
+
+  <div class="q-card" id="qc-6" data-required="true">
+    <div class="q-num">Vraag 6 van 8</div>
+    <div class="q-text">Hoe gemotiveerd was je om deze digitale oefening te maken, vergeleken met gewone boekopgaven?</div>
+    <div class="likert" id="q6">
+      <label class="likert-opt"><input type="radio" name="q6" value="1"><span class="likert-circle">1</span></label>
+      <label class="likert-opt"><input type="radio" name="q6" value="2"><span class="likert-circle">2</span></label>
+      <label class="likert-opt"><input type="radio" name="q6" value="3"><span class="likert-circle">3</span></label>
+      <label class="likert-opt"><input type="radio" name="q6" value="4"><span class="likert-circle">4</span></label>
+      <label class="likert-opt"><input type="radio" name="q6" value="5"><span class="likert-circle">5</span></label>
+    </div>
+    <div class="likert-ends"><span>Minder gemotiveerd</span><span>Veel meer gemotiveerd</span></div>
+  </div>
+
+  <div class="q-card" id="qc-7" data-required="true">
+    <div class="q-num">Vraag 7 van 8</div>
+    <div class="q-text">Welke voordelen zag je aan deze digitale oefening ten opzichte van het boek? <span class="q-sub">(meerdere antwoorden mogelijk)</span></div>
+    <div class="mc-options" id="q7">
+      <label class="mc-opt" onclick="selectCheckbox(this,'q7')"><input type="checkbox" name="q7" value="direct_weten"><span class="mc-sq"></span>Je weet direct of je het goed hebt</label>
+      <label class="mc-opt" onclick="selectCheckbox(this,'q7')"><input type="checkbox" name="q7" value="eigen_tempo"><span class="mc-sq"></span>Werken op eigen tempo</label>
+      <label class="mc-opt" onclick="selectCheckbox(this,'q7')"><input type="checkbox" name="q7" value="scorebord"><span class="mc-sq"></span>Het scorebord — leuk om te zien hoe je het doet ten opzichte van anderen</label>
+      <label class="mc-opt" onclick="selectCheckbox(this,'q7')"><input type="checkbox" name="q7" value="uitleg"><span class="mc-sq"></span>De uitleg die verschijnt na een vraag</label>
+      <label class="mc-opt" onclick="selectCheckbox(this,'q7')"><input type="checkbox" name="q7" value="overzichtelijk"><span class="mc-sq"></span>Overzichtelijker dan het boek</label>
+      <label class="mc-opt" onclick="selectCheckbox(this,'q7')"><input type="checkbox" name="q7" value="geen_voordelen"><span class="mc-sq"></span>Ik zag geen voordelen</label>
+    </div>
+  </div>
+
+  <!-- Open vraag -->
+  <div class="section-title">💬 Jouw mening</div>
+
+  <div class="q-card" id="qc-8">
+    <div class="q-num">Vraag 8 van 8</div>
+    <div class="q-text">Zou je vaker willen oefenen met dit soort digitale oefeningen? Waarom wel of niet? <span class="q-sub">(optioneel)</span></div>
+    <textarea class="open-input" id="q8" placeholder="Schrijf hier je antwoord..." oninput="updateProgress()"></textarea>
+  </div>
+
+  <div class="submit-wrap">
+    <button class="submit-btn" onclick="submitForm()">Verstuur enquête ✓</button>
+    <div class="required-note">* Vragen 1–7 zijn verplicht &nbsp;·&nbsp; Vraag 8 is optioneel</div>
+  </div>
+
+</div>
+
+<div id="thanks">
+  <div class="big-icon">🙏</div>
+  <h2>Bedankt!</h2>
+  <p>Jouw antwoorden zijn opgeslagen. De docent gebruikt jouw feedback om de lessen te verbeteren.</p>
+  <br>
+  <p style="font-size:0.88rem;color:var(--muted)">Je kunt dit venster nu sluiten.</p>
+</div>
+
+<!-- ── Docentenpaneel (verborgen, toegang via #docent in URL) ── -->
+<div id="docent-panel" style="display:none">
+  <div style="max-width:900px;margin:0 auto;padding:32px 20px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:12px;">
+      <h2 style="font-size:1.5rem;font-weight:900;">📊 Docentenpaneel — Enquêteresultaten</h2>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;">
+        <button onclick="loadResults()" style="font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:700;padding:10px 20px;border-radius:8px;border:2px solid var(--border);background:var(--card);cursor:pointer;">🔄 Vernieuwen</button>
+        <button onclick="downloadAllCSV()" style="font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:700;padding:10px 20px;border-radius:8px;border:none;background:var(--blue);color:white;cursor:pointer;">⬇ Download CSV</button>
+        <button onclick="clearAll()" style="font-family:'Outfit',sans-serif;font-size:0.9rem;font-weight:700;padding:10px 20px;border-radius:8px;border:2px solid #f87171;background:white;color:#dc2626;cursor:pointer;">🗑 Wis alles</button>
+      </div>
+    </div>
+    <div id="results-summary" style="margin-bottom:28px;"></div>
+    <div id="results-table" style="overflow-x:auto;"></div>
+  </div>
+</div>
+
+<script>
+// ─────────────────────────────────────────────
+// JSONBIN CONFIG
+// ➤ Maak een APARTE bin voor de enquête aan op jsonbin.io
+//   met inhoud: {"responses": []}
+// ─────────────────────────────────────────────
+const JSONBIN_ID  = 'JOUW_BIN_ID_HIER';
+const JSONBIN_KEY = 'JOUW_MASTER_KEY_HIER';
+
+const TOTAL_Q = 8;
+
+// Toon docentenpaneel als URL eindigt op #docent
+if (window.location.hash === '#docent') {
+  document.querySelector('.hero').style.display = 'none';
+  document.querySelector('.progress-wrap').style.display = 'none';
+  document.getElementById('form-main').style.display = 'none';
+  document.getElementById('docent-panel').style.display = 'block';
+  loadResults();
+}
+
+// ─── JSONBin helpers ───
+async function fetchResponses() {
+  try {
+    const res = await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}/latest`, {
+      headers: { 'X-Master-Key': JSONBIN_KEY }
+    });
+    const data = await res.json();
+    return Array.isArray(data.record?.responses) ? data.record.responses : [];
+  } catch (e) { console.warn('Ophalen mislukt:', e); return []; }
+}
+
+async function saveResponse(entry) {
+  const responses = await fetchResponses();
+  responses.push(entry);
+  try {
+    await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
+      body: JSON.stringify({ responses })
+    });
+  } catch (e) { console.warn('Opslaan mislukt:', e); }
+}
+
+// ─── Progress ───
+function updateProgress() {
+  let done = 0;
+  ['q1','q2','q3','q4','q5','q6'].forEach(n => {
+    if (document.querySelector(`input[name="${n}"]:checked`)) done++;
+  });
+  if (document.querySelector('input[name="q7"]:checked')) done++;
+  done++; // q8 optioneel
+  document.getElementById('prog-fill').style.width = (done / TOTAL_Q * 100) + '%';
+  document.getElementById('prog-label').textContent = `${done} / ${TOTAL_Q}`;
+}
+
+// ─── MC selectie ───
+function selectMC(label, groupName, qNum) {
+  document.querySelectorAll(`#${groupName} .mc-opt`).forEach(el => el.classList.remove('selected'));
+  label.classList.add('selected');
+  label.querySelector('input').checked = true;
+  document.getElementById(`qc-${qNum}`).classList.add('answered');
+  document.getElementById(`qc-${qNum}`).classList.remove('error');
+  updateProgress();
+}
+
+function selectCheckbox(label, groupName) {
+  const input = label.querySelector('input[type=checkbox]');
+  input.checked = !input.checked;
+  label.classList.toggle('selected', input.checked);
+  if (input.value === 'geen_voordelen' && input.checked) {
+    document.querySelectorAll(`#${groupName} input[type=checkbox]`).forEach(cb => {
+      if (cb.value !== 'geen_voordelen') { cb.checked = false; cb.closest('.mc-opt').classList.remove('selected'); }
+    });
+  } else if (input.value !== 'geen_voordelen' && input.checked) {
+    const geen = document.querySelector(`#${groupName} input[value="geen_voordelen"]`);
+    if (geen) { geen.checked = false; geen.closest('.mc-opt').classList.remove('selected'); }
+  }
+  if (document.querySelector(`input[name="${groupName}"]:checked`)) {
+    document.getElementById('qc-7').classList.add('answered');
+    document.getElementById('qc-7').classList.remove('error');
+  }
+  updateProgress();
+}
+
+document.querySelectorAll('.likert input[type=radio]').forEach(input => {
+  input.addEventListener('change', () => {
+    const num = input.name.replace('q','');
+    document.getElementById(`qc-${num}`).classList.add('answered');
+    document.getElementById(`qc-${num}`).classList.remove('error');
+    updateProgress();
+  });
+});
+
+// ─── Submit ───
+async function submitForm() {
+  let valid = true;
+  ['q1','q2','q3','q4','q5','q6'].forEach(name => {
+    const num = name.replace('q','');
+    const card = document.getElementById(`qc-${num}`);
+    if (!document.querySelector(`input[name="${name}"]:checked`)) {
+      card.classList.add('error'); card.classList.remove('answered'); valid = false;
+    }
+  });
+  if (!document.querySelector('input[name="q7"]:checked')) {
+    document.getElementById('qc-7').classList.add('error'); valid = false;
+  }
+  if (!valid) {
+    document.querySelector('.q-card.error').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  // Disable button to prevent double submit
+  const btn = document.querySelector('.submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Opslaan...';
+
+  const entry = {
+    naam: document.getElementById('naam').value.trim() || 'Anoniem',
+    datum: new Date().toLocaleString('nl-NL'),
+    q1_voorkeur_werkvorm:    document.querySelector('input[name="q1"]:checked')?.value,
+    q2_nut_directe_feedback: document.querySelector('input[name="q2"]:checked')?.value,
+    q3_opnieuw_invullen:     document.querySelector('input[name="q3"]:checked')?.value,
+    q4_zekerheid_na_oefening:document.querySelector('input[name="q4"]:checked')?.value,
+    q5_meer_geleerd_dan_boek:document.querySelector('input[name="q5"]:checked')?.value,
+    q6_motivatie_vs_boek:    document.querySelector('input[name="q6"]:checked')?.value,
+    q7_voordelen: [...document.querySelectorAll('input[name="q7"]:checked')].map(i => i.value).join(' | '),
+    q8_vaker_digitaal: document.getElementById('q8').value.trim()
+  };
+
+  await saveResponse(entry);
+
+  document.getElementById('form-main').style.display = 'none';
+  document.querySelector('.progress-wrap').style.display = 'none';
+  document.getElementById('thanks').style.display = 'block';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// ─── Docentenpaneel ───
+async function loadResults() {
+  const summaryEl = document.getElementById('results-summary');
+  const tableEl   = document.getElementById('results-table');
+  summaryEl.innerHTML = '<p style="color:var(--muted)">Laden...</p>';
+  tableEl.innerHTML = '';
+
+  const responses = await fetchResponses();
+
+  if (responses.length === 0) {
+    summaryEl.innerHTML = '<p style="color:var(--muted);font-size:1rem;">Nog geen reacties ontvangen.</p>';
+    return;
+  }
+
+  // ── Samenvatting ──
+  const n = responses.length;
+  const avg = (key) => {
+    const vals = responses.map(r => parseFloat(r[key])).filter(v => !isNaN(v));
+    return vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(1) : '—';
+  };
+  const count = (key, val) => responses.filter(r => r[key] === val).length;
+  const pct = (key, val) => Math.round(count(key,val)/n*100);
+
+  summaryEl.innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;margin-bottom:24px;">
+      ${[
+        ['📝 Inzendingen', n, ''],
+        ['Q2 Directe feedback', avg('q2_nut_directe_feedback'), '/ 5'],
+        ['Q4 Zekerheid achteraf', avg('q4_zekerheid_na_oefening'), '/ 5'],
+        ['Q6 Motivatie vs boek', avg('q6_motivatie_vs_boek'), '/ 5'],
+        ['Voorkeur digitaal', pct('q1_voorkeur_werkvorm','digitaal') + '%', 'kiest digitaal'],
+        ['Meer geleerd digitaal', pct('q5_meer_geleerd_dan_boek','meer_digitaal') + '%', 'zegt ja'],
+      ].map(([label, val, sub]) => `
+        <div style="background:var(--card);border:2px solid var(--border);border-radius:14px;padding:16px 18px;">
+          <div style="font-size:0.8rem;color:var(--muted);font-weight:700;margin-bottom:4px;">${label}</div>
+          <div style="font-size:2rem;font-weight:900;color:var(--blue);line-height:1;">${val}</div>
+          ${sub ? `<div style="font-size:0.8rem;color:var(--muted);">${sub}</div>` : ''}
+        </div>`).join('')}
+    </div>`;
+
+  // ── Tabel ──
+  const keys = Object.keys(responses[0]);
+  const colLabels = {
+    naam: 'Naam', datum: 'Datum',
+    q1_voorkeur_werkvorm: 'Q1 Voorkeur',
+    q2_nut_directe_feedback: 'Q2 Feedback',
+    q3_opnieuw_invullen: 'Q3 Herkansen',
+    q4_zekerheid_na_oefening: 'Q4 Zekerheid',
+    q5_meer_geleerd_dan_boek: 'Q5 Meer geleerd',
+    q6_motivatie_vs_boek: 'Q6 Motivatie',
+    q7_voordelen: 'Q7 Voordelen',
+    q8_vaker_digitaal: 'Q8 Open antwoord'
+  };
+
+  tableEl.innerHTML = `
+    <table style="width:100%;border-collapse:collapse;font-size:0.88rem;background:var(--card);border-radius:14px;overflow:hidden;border:2px solid var(--border);">
+      <thead>
+        <tr style="background:#060e22;color:white;">
+          ${keys.map(k => `<th style="padding:12px 14px;text-align:left;white-space:nowrap;font-size:0.8rem;letter-spacing:0.5px;">${colLabels[k]||k}</th>`).join('')}
+        </tr>
+      </thead>
+      <tbody>
+        ${responses.map((r,i) => `
+          <tr style="border-bottom:1px solid var(--border);${i%2===0?'':'background:#f8faff'}">
+            ${keys.map(k => `<td style="padding:10px 14px;vertical-align:top;max-width:200px;word-break:break-word;">${r[k]||'—'}</td>`).join('')}
+          </tr>`).join('')}
+      </tbody>
+    </table>`;
+}
+
+function downloadAllCSV() {
+  fetchResponses().then(responses => {
+    if (!responses.length) { alert('Geen data om te downloaden.'); return; }
+    const keys = Object.keys(responses[0]);
+    const rows = [keys.join(';'), ...responses.map(r => keys.map(k => `"${(r[k]||'').replace(/"/g,'""')}"`).join(';'))];
+    const blob = new Blob(['\uFEFF' + rows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `enquete_resultaten_${new Date().toISOString().slice(0,10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+  });
+}
+
+async function clearAll() {
+  if (!confirm('Alle enquêteresultaten wissen?')) return;
+  try {
+    await fetch(`https://api.jsonbin.io/v3/b/${JSONBIN_ID}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json', 'X-Master-Key': JSONBIN_KEY },
+      body: JSON.stringify({ responses: [] })
+    });
+    loadResults();
+  } catch(e) { alert('Wissen mislukt.'); }
+}
+
+updateProgress();
+</script>
+</body>
+</html>
