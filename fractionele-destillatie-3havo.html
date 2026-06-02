@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fractionele destillatie & koolwaterstoffen — 3 havo</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800&family=Nunito+Sans:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito Sans',sans-serif;background:#f5f7fa;min-height:100vh;padding:1.5rem 1rem;}
+.card{max-width:740px;margin:0 auto;background:white;border-radius:16px;padding:1.5rem 1.25rem;box-shadow:0 2px 12px rgba(0,0,0,0.07);}
+h1{font-family:'Nunito',sans-serif;font-size:22px;font-weight:800;color:#0C447C;margin-bottom:3px;}
+.sub{font-size:13px;color:#888;margin-bottom:1.2rem;}
+.stitle{font-family:'Nunito',sans-serif;font-size:15px;font-weight:800;padding:5px 14px;border-radius:20px;display:inline-block;margin-bottom:11px;}
+.hb{background:#E6F1FB;color:#0C447C;}.hg{background:#E1F5EE;color:#085041;}.hc{background:#FAECE7;color:#712B13;}.hp{background:#EEEDFE;color:#3C3489;}
+.sblock{margin-bottom:1.6rem;}
+.qt{font-size:14px;color:#333;margin-bottom:9px;line-height:1.6;}
+.tabs{display:flex;gap:5px;margin-bottom:1.2rem;flex-wrap:wrap;}
+.tab{font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;padding:6px 13px;border-radius:20px;border:2px solid transparent;cursor:pointer;background:#f0f2f5;color:#666;transition:all 0.15s;}
+.tab.active{color:white;}
+.tab[data-t="0"].active{background:#185FA5;}.tab[data-t="1"].active{background:#0F6E56;}.tab[data-t="2"].active{background:#993C1D;}.tab[data-t="3"].active{background:#534AB7;}
+.tab:hover:not(.active){background:#e4e8ef;color:#333;}
+.page{display:none;}.page.active{display:block;}
+.wb{background:#E6F1FB;border-radius:12px;padding:10px 12px;margin-bottom:12px;}
+.wbt{font-size:11px;font-weight:700;color:#185FA5;margin-bottom:7px;text-transform:uppercase;letter-spacing:0.5px;}
+.wchip{display:inline-block;margin:3px;padding:4px 9px;background:white;border:2px solid #85B7EB;border-radius:20px;font-size:12px;color:#0C447C;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:700;user-select:none;transition:box-shadow 0.1s;}
+.wchip:hover{box-shadow:0 2px 5px rgba(24,95,165,0.18);}
+.wchip.used{opacity:0.32;cursor:default;}.wchip.selected{outline:3px solid #185FA5;}
+.mc-v{background:white;border:0.5px solid #ddd;border-radius:12px;padding:13px;margin-bottom:11px;}
+.mc-g{display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-top:9px;}
+.mo{padding:7px 11px;border-radius:8px;border:2px solid #ddd;background:#f5f7fa;font-size:13px;color:#333;cursor:pointer;font-family:'Nunito',sans-serif;font-weight:600;transition:all 0.15s;}
+.mo:hover{border-color:#85B7EB;background:#E6F1FB;}
+.mo.correct{border-color:#1D9E75;background:#E1F5EE;color:#085041;}
+.mo.wrong{border-color:#D85A30;background:#FAECE7;color:#993C1D;}
+.mo.grayed{opacity:0.42;pointer-events:none;}
+.mfb{font-size:13px;margin-top:7px;padding:5px 9px;border-radius:8px;display:none;}
+.mfb.show{display:block;}.mfb.ok{background:#E1F5EE;color:#085041;}.mfb.nee{background:#FAECE7;color:#993C1D;}
+.zin{font-size:14px;line-height:2.6;color:#333;margin-bottom:3px;}
+.gap{display:inline-block;min-width:110px;border-bottom:2px solid #378ADD;padding:0 3px;font-family:'Nunito',sans-serif;font-weight:700;color:#185FA5;font-size:13px;text-align:center;vertical-align:bottom;cursor:pointer;}
+.gap.filled{border-color:#1D9E75;color:#085041;}.gap.wrong{border-color:#D85A30;color:#993C1D;}
+.gbank{display:flex;flex-wrap:wrap;gap:5px;margin:9px 0;}
+.eqw{display:flex;align-items:center;gap:5px;flex-wrap:wrap;font-size:15px;color:#333;margin-bottom:11px;}
+.eqi{width:38px;text-align:center;border:2px solid #85B7EB;border-radius:6px;padding:3px;font-family:'Nunito',sans-serif;font-weight:700;font-size:15px;color:#0C447C;background:white;}
+.eqi.correct{border-color:#1D9E75;background:#E1F5EE;color:#085041;}.eqi.wrong{border-color:#D85A30;background:#FAECE7;color:#993C1D;}
+.btn{font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;padding:7px 17px;border-radius:20px;border:none;cursor:pointer;}
+.bbl{background:#185FA5;color:white;}.bbg{background:#0F6E56;color:white;}.bbc{background:#993C1D;color:white;}.bbp{background:#534AB7;color:white;}
+.bbr{background:#f0f2f5;color:#666;border:1px solid #ddd;}
+.sb{display:none;font-family:'Nunito',sans-serif;font-weight:800;font-size:13px;padding:3px 11px;border-radius:20px;margin-left:7px;}
+.qlbl{font-size:12px;font-weight:600;color:#888;margin-bottom:5px;}
+.achip{display:inline-block;padding:4px 11px;border-radius:20px;font-size:13px;font-family:'Nunito',sans-serif;font-weight:700;cursor:pointer;border:2px solid #AFA9EC;background:#EEEDFE;color:#3C3489;margin:3px;user-select:none;}
+.achip:hover{box-shadow:0 2px 5px rgba(83,74,183,0.18);}
+.achip.selected{outline:3px solid #534AB7;}.achip.used{opacity:0.3;cursor:default;}
+.adrop{display:inline-block;min-width:75px;border-bottom:2px solid #7F77DD;padding:1px 5px;font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;color:#534AB7;text-align:center;cursor:pointer;}
+.adrop.empty{color:#AFA9EC;}.adrop.correct{border-color:#1D9E75;color:#085041;}.adrop.wrong{border-color:#D85A30;color:#993C1D;}
+table{width:100%;border-collapse:collapse;table-layout:fixed;}
+th{font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;padding:7px 9px;text-align:left;background:#EEEDFE;color:#3C3489;border:0.5px solid #AFA9EC;}
+td{padding:7px 9px;border:0.5px solid #e0e0e0;font-size:13px;vertical-align:middle;color:#333;}
+tr:nth-child(even) td{background:#fafafa;}
+.nc{font-weight:600;}
+foreignObject div{font-family:'Nunito',sans-serif;font-weight:700;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;text-align:center;width:100%;height:100%;border-radius:7px;padding:2px 3px;line-height:1.2;}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+.match-starters{display:flex;flex-direction:column;gap:6px;}
+.match-ends{display:flex;flex-direction:column;gap:6px;}
+.match-starter-row{display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.starter-box{flex:1;min-width:120px;background:#f5f7fa;border-radius:8px;padding:7px 10px;font-size:13px;color:#333;line-height:1.4;}
+.letter-btn{font-family:'Nunito',sans-serif;font-weight:700;font-size:13px;padding:4px 9px;border-radius:8px;border:2px solid #ddd;background:#f5f7fa;cursor:pointer;min-width:32px;color:#333;}
+.letter-btn:hover{border-color:#85B7EB;background:#E6F1FB;}
+.letter-btn.picked{background:#E6F1FB;border-color:#378ADD;color:#0C447C;}
+.letter-btn.correct{border-color:#1D9E75;background:#E1F5EE;color:#085041;}
+.letter-btn.wrong{border-color:#D85A30;background:#FAECE7;color:#993C1D;}
+.end-row{display:flex;align-items:flex-start;gap:7px;background:#f5f7fa;border-radius:8px;padding:7px 10px;}
+.end-letter{font-family:'Nunito',sans-serif;font-weight:800;font-size:14px;color:#185FA5;min-width:16px;}
+.end-text{font-size:13px;color:#333;line-height:1.4;}
+.match-fb{font-size:12px;font-weight:700;min-width:20px;}
+</style>
+</head>
+<body>
+<div class="card">
+<h1>⚗️ Fractionele destillatie & koolwaterstoffen</h1>
+<p class="sub">3 havo — Kenniswerkblad</p>
+
+<div class="tabs">
+  <button class="tab active" data-t="0">📚 Deel 1 — Kennis</button>
+  <button class="tab" data-t="1">🧪 Deel 2 — Oefenen</button>
+  <button class="tab" data-t="2">🔥 Deel 3 — Verbranding</button>
+  <button class="tab" data-t="3">🔗 Deel 4 — Alkanen</button>
+</div>
+
+<!-- PAGINA 1 -->
+<div class="page active" id="p0">
+  <div class="sblock">
+    <div class="stitle hb">1.1 — Fractioneerkolom labelen</div>
+    <p class="qt">Klik op een woord, dan op een vakje. Klik op een gevuld vakje om het te wissen.</p>
+    <div class="wb">
+      <div class="wbt">Fracties</div>
+      <div id="chipbank">
+        <span class="wchip" data-word="vloeibaar petroleumgas">vloeibaar petroleumgas</span>
+        <span class="wchip" data-word="benzine">benzine</span>
+        <span class="wchip" data-word="kerosine">kerosine</span>
+        <span class="wchip" data-word="diesel">diesel</span>
+        <span class="wchip" data-word="zware stookolie">zware stookolie</span>
+        <span class="wchip" data-word="bitumen">bitumen</span>
+      </div>
+    </div>
+    <svg width="100%" viewBox="0 0 680 520">
+      <defs><marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+      <text font-size="12" font-family="Nunito Sans,sans-serif" fill="#185FA5" x="52" y="62" text-anchor="middle">koud ↑</text>
+      <text font-size="12" font-family="Nunito Sans,sans-serif" fill="#D85A30" x="52" y="474" text-anchor="middle">↓ warm</text>
+      <polygon points="138,58 268,58 268,128 138,128" fill="#B5D4F4" opacity="0.55"/>
+      <polygon points="138,128 268,128 269,198 137,198" fill="#85B7EB" opacity="0.45"/>
+      <polygon points="137,198 269,198 270,268 136,268" fill="#EF9F27" opacity="0.28"/>
+      <polygon points="136,268 270,268 271,338 135,338" fill="#F0997B" opacity="0.38"/>
+      <polygon points="135,338 271,338 272,408 134,408" fill="#D85A30" opacity="0.38"/>
+      <polygon points="134,408 272,408 274,478 132,478" fill="#A32D2D" opacity="0.42"/>
+      <polygon points="138,58 268,58 274,478 132,478" fill="none" stroke="#378ADD" stroke-width="2"/>
+      <line x1="138" y1="128" x2="268" y2="128" stroke="#378ADD" stroke-width="1" stroke-dasharray="4 3" opacity="0.55"/>
+      <line x1="137" y1="198" x2="269" y2="198" stroke="#378ADD" stroke-width="1" stroke-dasharray="4 3" opacity="0.55"/>
+      <line x1="136" y1="268" x2="270" y2="268" stroke="#378ADD" stroke-width="1" stroke-dasharray="4 3" opacity="0.55"/>
+      <line x1="135" y1="338" x2="271" y2="338" stroke="#378ADD" stroke-width="1" stroke-dasharray="4 3" opacity="0.55"/>
+      <line x1="134" y1="408" x2="272" y2="408" stroke="#378ADD" stroke-width="1" stroke-dasharray="4 3" opacity="0.55"/>
+      <line x1="203" y1="58" x2="203" y2="30" stroke="#185FA5" stroke-width="2" marker-end="url(#arr)"/>
+      <text font-size="11" font-family="Nunito Sans,sans-serif" fill="#185FA5" x="203" y="24" text-anchor="middle">gas</text>
+      <rect x="22" y="420" width="78" height="52" rx="8" fill="#F09595" stroke="#E24B4A" stroke-width="1.5"/>
+      <text font-size="12" font-family="Nunito,sans-serif" font-weight="700" fill="#791F1F" x="61" y="442" text-anchor="middle">oven</text>
+      <polygon points="36,468 43,450 50,468" fill="#EF9F27" opacity="0.9"/>
+      <polygon points="52,468 59,452 66,468" fill="#E24B4A" opacity="0.9"/>
+      <polygon points="68,468 75,451 82,468" fill="#EF9F27" opacity="0.9"/>
+      <path d="M100,446 L132,446 L132,478" fill="none" stroke="#E24B4A" stroke-width="2.5" stroke-linecap="round" marker-end="url(#arr)"/>
+      <line x1="22" y1="360" x2="132" y2="360" stroke="#BA7517" stroke-width="2.5" stroke-linecap="round" marker-end="url(#arr)" fill="none"/>
+      <text font-size="11" font-family="Nunito Sans,sans-serif" fill="#633806" x="18" y="352" text-anchor="middle">ruwe</text>
+      <text font-size="11" font-family="Nunito Sans,sans-serif" fill="#633806" x="18" y="364" text-anchor="middle">aardolie</text>
+      <line x1="268" y1="93"  x2="306" y2="93"  stroke="#185FA5" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="269" y1="163" x2="306" y2="163" stroke="#185FA5" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="270" y1="233" x2="306" y2="233" stroke="#185FA5" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="271" y1="303" x2="306" y2="303" stroke="#185FA5" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="272" y1="373" x2="306" y2="373" stroke="#185FA5" stroke-width="1.5" marker-end="url(#arr)"/>
+      <line x1="273" y1="443" x2="306" y2="443" stroke="#185FA5" stroke-width="1.5" marker-end="url(#arr)"/>
+      <foreignObject id="dz0" x="306" y="77"  width="148" height="30" data-ans="vloeibaar petroleumgas"><div xmlns="http://www.w3.org/1999/xhtml" id="dzd0" style="background:#f0f4ff;border:2px dashed #85B7EB;color:#aaa;">klik hier</div></foreignObject>
+      <foreignObject id="dz1" x="306" y="147" width="118" height="30" data-ans="benzine"><div xmlns="http://www.w3.org/1999/xhtml" id="dzd1" style="background:#f0f4ff;border:2px dashed #85B7EB;color:#aaa;">klik hier</div></foreignObject>
+      <foreignObject id="dz2" x="306" y="217" width="118" height="30" data-ans="kerosine"><div xmlns="http://www.w3.org/1999/xhtml" id="dzd2" style="background:#f0f4ff;border:2px dashed #85B7EB;color:#aaa;">klik hier</div></foreignObject>
+      <foreignObject id="dz3" x="306" y="287" width="100" height="30" data-ans="diesel"><div xmlns="http://www.w3.org/1999/xhtml" id="dzd3" style="background:#f0f4ff;border:2px dashed #85B7EB;color:#aaa;">klik hier</div></foreignObject>
+      <foreignObject id="dz4" x="306" y="357" width="138" height="30" data-ans="zware stookolie"><div xmlns="http://www.w3.org/1999/xhtml" id="dzd4" style="background:#f0f4ff;border:2px dashed #85B7EB;color:#aaa;">klik hier</div></foreignObject>
+      <foreignObject id="dz5" x="306" y="427" width="100" height="30" data-ans="bitumen"><div xmlns="http://www.w3.org/1999/xhtml" id="dzd5" style="background:#f0f4ff;border:2px dashed #85B7EB;color:#aaa;">klik hier</div></foreignObject>
+    </svg>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:6px;">
+      <button class="btn bbl" onclick="checkKolom()">✓ Controleer</button>
+      <button class="btn bbr" onclick="resetKolom()">↺ Reset</button>
+      <span class="sb" id="kscore"></span>
+    </div>
+  </div>
+
+  <div class="sblock">
+    <div class="stitle hb">1.2 — Zinnen koppelen</div>
+    <p class="qt">Kies bij elke zin de juiste letter. De eindstukken staan rechts.</p>
+    <div class="match-grid">
+      <div class="match-starters" id="match-starters"></div>
+      <div class="match-ends" id="match-ends"></div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:6px;">
+      <button class="btn bbl" onclick="checkMatch()">✓ Controleer</button>
+      <span class="sb" id="mscore"></span>
+    </div>
+  </div>
+
+  <div class="sblock">
+    <div class="stitle hb">1.3 — Kies het juiste woord</div>
+    <div id="mc13"></div>
+  </div>
+</div>
+
+<!-- PAGINA 2 -->
+<div class="page" id="p1">
+  <div class="sblock">
+    <div class="stitle hg">2.1–2.3 — Meerkeuze</div>
+    <div id="mcblok"></div>
+  </div>
+  <div class="sblock">
+    <div class="stitle hg">1.4 — Vul de gaten in</div>
+    <p class="qt">Klik op een woord en dan op het streepje. Klik op een ingevuld streepje om het te wissen.</p>
+    <div class="gbank" id="gbank14"></div>
+    <div id="gtext14"></div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:9px;">
+      <button class="btn bbg" onclick="checkGaps()">✓ Controleer</button>
+      <button class="btn bbr" onclick="resetGaps()">↺ Reset</button>
+      <span class="sb" id="gscore"></span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGINA 3 -->
+<div class="page" id="p2">
+  <div class="sblock">
+    <div class="stitle hc">2.5 — Ontbrekend reagens</div>
+    <div id="mc25"></div>
+  </div>
+  <div class="sblock">
+    <div class="stitle hc">2.6 — Balanceer de vergelijking</div>
+    <p class="qt">Vul de juiste coëfficiënten in voor de verbranding van propaan (C₃H₈).</p>
+    <div class="eqw">
+      <span>C₃H₈(g) +</span>
+      <input class="eqi" id="eq1" type="number" min="1" max="20" placeholder="?">
+      <span>O₂(g) →</span>
+      <input class="eqi" id="eq2" type="number" min="1" max="20" placeholder="?">
+      <span>CO₂(g) +</span>
+      <input class="eqi" id="eq3" type="number" min="1" max="20" placeholder="?">
+      <span>H₂O(l)</span>
+    </div>
+    <button class="btn bbc" onclick="checkEq()">✓ Controleer</button>
+    <span id="eqfb" style="display:none;font-size:13px;margin-left:9px;font-weight:700;"></span>
+    <div style="margin-top:11px;font-size:13px;color:#534AB7;background:#EEEDFE;padding:9px;border-radius:8px;">💡 Tip: tel eerst C, dan H, dan O.</div>
+  </div>
+  <div class="sblock">
+    <div class="stitle hc">2.4 — Onvolledige verbranding</div>
+    <p class="qt">Welke twee producten ontstaan bij onvolledige verbranding van methaan? Kies twee.</p>
+    <div id="mc24m"></div>
+    <div style="display:flex;gap:8px;align-items:center;margin-top:8px;">
+      <button class="btn bbc" onclick="checkMulti()">✓ Controleer</button>
+      <span id="multifb" style="display:none;font-size:13px;font-weight:700;margin-left:7px;"></span>
+    </div>
+  </div>
+</div>
+
+<!-- PAGINA 4 -->
+<div class="page" id="p3">
+  <div class="sblock">
+    <div class="stitle hp">3.2 — Alkanen: namen en formules</div>
+    <p class="qt">Klik op een formule of getal, dan op een vakje. Klik op een gevuld vakje om het te wissen.</p>
+    <div class="gbank" id="abank"></div>
+    <table style="margin-bottom:4px;">
+      <thead><tr>
+        <th style="width:25%;">Naam</th>
+        <th style="width:25%;">Aantal C</th>
+        <th style="width:25%;">Molecuulformule</th>
+        <th style="width:25%;">Aantal H</th>
+      </tr></thead>
+      <tbody id="atbody"></tbody>
+    </table>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:11px;">
+      <button class="btn bbp" onclick="checkAlkanen()">✓ Controleer</button>
+      <button class="btn bbr" onclick="resetAlkanen()">↺ Reset</button>
+      <span class="sb" id="ascore"></span>
+    </div>
+    <div style="margin-top:13px;background:#EEEDFE;border-radius:9px;padding:9px 13px;font-size:13px;color:#534AB7;">
+      <strong style="color:#3C3489;">Tip:</strong> Algemene formule alkanen = C<sub>n</sub>H<sub>2n+2</sub>
+    </div>
+  </div>
+</div>
+</div>
+
+<script>
+let selChip=null,selAlkaan=null,gapSel=null;
+const kFilled={},gFilled={},aFilled={};
+let multiSel=new Set(),matchSel={};
+
+const kAnswers=["vloeibaar petroleumgas","benzine","kerosine","diesel","zware stookolie","bitumen"];
+const matchS=[
+  {s:"Aardolie bevat …",a:"D"},
+  {s:"Fractionele destillatie wordt gebruikt om …",a:"C"},
+  {s:"Tijdens fractionele destillatie …",a:"A"},
+  {s:"De koolwaterstoffen worden gescheiden op basis van …",a:"E"},
+  {s:"De fractioneerkolom is …",a:"B"}
+];
+const matchE=[
+  {l:"A",t:"… verdampen en condenseren de fracties."},
+  {l:"B",t:"… onderaan heter."},
+  {l:"C",t:"… aardolie scheiden in fracties."},
+  {l:"D",t:"… een mengsel van koolwaterstoffen."},
+  {l:"E",t:"… hun verschillende kookpunten."}
+];
+const mc13d=[
+  {v:"De mengsels van koolwaterstoffen uit de fractioneerkolom heten:",opts:["veelvouden","fracties"],a:1},
+  {v:"Koolwaterstoffen zijn verbindingen van waterstof en:",opts:["zuurstof","koolstof"],a:1},
+  {v:"De algemene formule van alkanen is:",opts:["CₙH₂ₙ₊₂","CₙH₂ₙ"],a:0},
+  {v:"Ethaan heeft twee koolstofatomen. De molecuulformule is:",opts:["C₂H₆","C₂H₄"],a:0}
+];
+const mcBd=[
+  {nr:"2.1",v:"Welke formule hoort bij een koolwaterstof?",opts:["C₅H₁₂","CO₂","CH₃COOH"],a:0,fb:"Koolwaterstoffen bevatten alleen C en H. C₅H₁₂ ✓"},
+  {nr:"2.2",v:"Welk alkaan heeft het hoogste kookpunt?",opts:["CH₄","C₇H₁₆","C₂₀H₄₂","C₇₀H₁₄₂"],a:3,fb:"Hoe groter het molecuul → sterkere krachten → hoger kookpunt. C₇₀H₁₄₂ ✓"},
+  {nr:"2.3",v:"LPG bevat koolwaterstoffen met 1–4 C-atomen. Welke eigenschap klopt?",opts:["hoge kookpunten","makkelijk te ontbranden","hoge viscositeit","sterke intermoleculaire krachten"],a:1,fb:"Kleine moleculen, lage kookpunten → makkelijk te ontbranden ✓"}
+];
+const gWords=["intermoleculaire krachten","condenseren","vloeibaar petroleumgas","sterkere","hogere"];
+const gSents=[
+  {t:"Kleine alkaanmoleculen hebben zwakke ___ en lage kookpunten.",a:"intermoleculaire krachten"},
+  {t:"Ze ___ niet in de fractioneerkolom.",a:"condenseren"},
+  {t:"Ze verlaten de kolom als ___.",a:"vloeibaar petroleumgas"},
+  {t:"Grotere alkaanmoleculen hebben ___ intermoleculaire krachten.",a:"sterkere"},
+  {t:"Daardoor hebben grotere alkanen ___ kookpunten.",a:"hogere"}
+];
+const alkanen=[
+  {n:"methaan",c:1,f:"CH₄",h:4},
+  {n:"ethaan",c:2,f:"C₂H₆",h:6},
+  {n:"propaan",c:3,f:"C₃H₈",h:8},
+  {n:"butaan",c:4,f:"C₄H₁₀",h:10},
+  {n:"pentaan",c:5,f:"C₅H₁₂",h:12}
+];
+const aF=["CH₄","C₂H₆","C₃H₈","C₄H₁₀","C₅H₁₂"];
+const aH=["4","6","8","10","12"];
+const aC=["1","2","3","4","5"];
+
+function shuffle(a){return [...a].sort(()=>Math.random()-0.5);}
+function showSB(id,ok,tot){
+  const s=document.getElementById(id);s.style.display='inline-block';
+  s.style.background=ok===tot?'#E1F5EE':'#FAECE7';
+  s.style.color=ok===tot?'#085041':'#712B13';
+  s.textContent=ok+'/'+tot+(ok===tot?' 🎉':'');
+}
+
+document.querySelectorAll('.tab').forEach(t=>{
+  t.addEventListener('click',()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active');
+    document.getElementById('p'+t.dataset.t).classList.add('active');
+  });
+});
+
+document.querySelectorAll('#chipbank .wchip').forEach(c=>{
+  c.addEventListener('click',()=>{
+    if(c.classList.contains('used'))return;
+    document.querySelectorAll('#chipbank .wchip').forEach(x=>x.classList.remove('selected'));
+    if(selChip===c.dataset.word){selChip=null;return;}
+    selChip=c.dataset.word;c.classList.add('selected');
+  });
+});
+for(let i=0;i<6;i++){
+  (function(idx){
+    document.getElementById('dz'+idx).addEventListener('click',()=>{
+      const dv=document.getElementById('dzd'+idx);
+      if(!selChip){
+        if(kFilled[idx]!==undefined){
+          const w=kFilled[idx];delete kFilled[idx];
+          dv.textContent='klik hier';dv.style.cssText='background:#f0f4ff;border:2px dashed #85B7EB;color:#aaa;';
+          document.querySelectorAll('#chipbank .wchip').forEach(c=>{if(c.dataset.word===w)c.classList.remove('used');});
+        }return;
+      }
+      if(kFilled[idx]!==undefined)return;
+      kFilled[idx]=selChip;dv.textContent=selChip;
+      dv.style.cssText='background:white;border:2px solid #85B7EB;color:#0C447C;';
+      document.querySelectorAll('#chipbank .wchip').forEach(c=>{if(c.dataset.word===selChip){c.classList.add('used');c.classList.remove('selected');}});
+      selChip=null;
+    });
+  })(i);
+}
+function checkKolom(){
+  let ok=0;
+  for(let i=0;i<6;i++){
+    const dv=document.getElementById('dzd'+i);
+    if(kFilled[i]!==undefined){
+      if(kFilled[i]===kAnswers[i]){dv.style.cssText='background:#E1F5EE;border:2px solid #1D9E75;color:#085041;';ok++;}
+      else dv.style.cssText='background:#FAECE7;border:2px solid #D85A30;color:#993C1D;';
+    }
+  }
+  showSB('kscore',ok,6);
+}
+function resetKolom(){
+  for(let i=0;i<6;i++){
+    delete kFilled[i];
+    document.getElementById('dzd'+i).textContent='klik hier';
+    document.getElementById('dzd'+i).style.cssText='background:#f0f4ff;border:2px dashed #85B7EB;color:#aaa;';
+  }
+  document.querySelectorAll('#chipbank .wchip').forEach(c=>c.classList.remove('used','selected'));
+  selChip=null;document.getElementById('kscore').style.display='none';
+}
+
+function initMatch(){
+  const sc=document.getElementById('match-starters');
+  const ec=document.getElementById('match-ends');
+  matchE.forEach(e=>{
+    const row=document.createElement('div');row.className='end-row';
+    const lspan=document.createElement('span');lspan.className='end-letter';lspan.textContent=e.l;
+    const tspan=document.createElement('span');tspan.className='end-text';tspan.textContent=e.t;
+    row.appendChild(lspan);row.appendChild(tspan);ec.appendChild(row);
+  });
+  matchS.forEach((s,i)=>{
+    const row=document.createElement('div');row.className='match-starter-row';
+    const box=document.createElement('div');box.className='starter-box';box.textContent=s.s;
+    const btns=document.createElement('div');btns.style.cssText='display:flex;gap:3px;flex-wrap:wrap;';
+    matchE.forEach(e=>{
+      const b=document.createElement('button');b.className='letter-btn';b.textContent=e.l;
+      b.addEventListener('click',()=>{
+        btns.querySelectorAll('button').forEach(x=>x.classList.remove('picked'));
+        matchSel[i]=e.l;b.classList.add('picked');
+      });
+      btns.appendChild(b);
+    });
+    const fb=document.createElement('span');fb.className='match-fb';fb.id='mfb'+i;
+    row.appendChild(box);row.appendChild(btns);row.appendChild(fb);sc.appendChild(row);
+  });
+}
+function checkMatch(){
+  let ok=0;
+  matchS.forEach((s,i)=>{
+    const fb=document.getElementById('mfb'+i);
+    const row=document.getElementById('match-starters').children[i];
+    row.querySelectorAll('button').forEach(b=>{
+      b.classList.remove('correct','wrong');
+      if(b.textContent===matchSel[i]){
+        if(b.textContent===s.a){b.classList.add('correct');ok++;fb.textContent='✓';fb.style.color='#1D9E75';}
+        else{b.classList.add('wrong');fb.textContent='→'+s.a;fb.style.color='#D85A30';}
+      }
+    });
+  });
+  showSB('mscore',ok,matchS.length);
+}
+
+function initMC13(){
+  const c=document.getElementById('mc13');
+  mc13d.forEach(q=>{
+    const w=document.createElement('div');w.className='mc-v';
+    const vt=document.createElement('p');vt.className='qt';vt.style.marginBottom='0';vt.textContent=q.v;w.appendChild(vt);
+    const opts=document.createElement('div');opts.style.cssText='display:flex;gap:5px;margin-top:7px;flex-wrap:wrap;';
+    q.opts.forEach((o,oi)=>{
+      const b=document.createElement('button');b.className='mo';b.textContent=o;
+      b.addEventListener('click',()=>{
+        opts.querySelectorAll('button').forEach(x=>x.classList.remove('correct','wrong'));
+        if(oi===q.a)b.classList.add('correct');
+        else{b.classList.add('wrong');opts.querySelectorAll('button')[q.a].classList.add('correct');}
+        opts.querySelectorAll('button').forEach(x=>x.style.pointerEvents='none');
+      });
+      opts.appendChild(b);
+    });
+    w.appendChild(opts);c.appendChild(w);
+  });
+}
+
+function initMCBlok(){
+  const c=document.getElementById('mcblok');
+  mcBd.forEach(q=>{
+    const w=document.createElement('div');w.className='mc-v';
+    const lbl=document.createElement('div');lbl.className='qlbl';lbl.textContent='Vraag '+q.nr;w.appendChild(lbl);
+    const vt=document.createElement('p');vt.className='qt';vt.style.marginBottom='0';vt.textContent=q.v;w.appendChild(vt);
+    const opts=document.createElement('div');opts.className='mc-g';
+    const fb=document.createElement('div');fb.className='mfb';
+    q.opts.forEach((o,oi)=>{
+      const b=document.createElement('button');b.className='mo';b.textContent=o;
+      b.addEventListener('click',()=>{
+        opts.querySelectorAll('button').forEach(x=>x.classList.remove('correct','wrong','grayed'));
+        if(oi===q.a){b.classList.add('correct');fb.textContent='✓ '+q.fb;fb.className='mfb ok show';}
+        else{b.classList.add('wrong');opts.querySelectorAll('button')[q.a].classList.add('correct');fb.textContent='✗ '+q.fb;fb.className='mfb nee show';}
+        opts.querySelectorAll('button').forEach(x=>x.style.pointerEvents='none');
+      });
+      opts.appendChild(b);
+    });
+    w.appendChild(opts);w.appendChild(fb);c.appendChild(w);
+  });
+}
+
+function initGaps(){
+  const bank=document.getElementById('gbank14');
+  gWords.forEach((w,i)=>{
+    const c=document.createElement('span');c.className='wchip';c.dataset.word=w;c.id='gw'+i;c.textContent=w;
+    c.addEventListener('click',()=>{
+      document.querySelectorAll('#gbank14 .wchip').forEach(x=>x.style.outline='');
+      if(gapSel===w){gapSel=null;return;}
+      gapSel=w;c.style.outline='3px solid #0F6E56';
+    });
+    bank.appendChild(c);
+  });
+  const gt=document.getElementById('gtext14');
+  gSents.forEach((s,si)=>{
+    const p=document.createElement('p');p.className='zin';
+    const pts=s.t.split('___');
+    p.appendChild(document.createTextNode(pts[0]));
+    const g=document.createElement('span');g.className='gap';g.dataset.idx=si;g.textContent='_______';
+    g.addEventListener('click',()=>{
+      if(!gapSel){
+        if(gFilled[si]!==undefined){
+          const word=gFilled[si];delete gFilled[si];
+          g.textContent='_______';g.classList.remove('filled','wrong');
+          document.querySelectorAll('#gbank14 .wchip').forEach(c=>{if(c.dataset.word===word)c.classList.remove('used');});
+        }return;
+      }
+      if(g.classList.contains('filled'))return;
+      g.textContent=gapSel;g.classList.add('filled');gFilled[si]=gapSel;
+      document.querySelectorAll('#gbank14 .wchip').forEach(c=>{if(c.dataset.word===gapSel){c.classList.add('used');c.style.outline='';}});
+      gapSel=null;
+    });
+    p.appendChild(g);if(pts[1])p.appendChild(document.createTextNode(pts[1]));
+    gt.appendChild(p);
+  });
+}
+function checkGaps(){
+  let ok=0;
+  document.querySelectorAll('#gtext14 .gap').forEach(g=>{
+    const idx=parseInt(g.dataset.idx);
+    if(gFilled[idx]!==undefined){
+      if(gFilled[idx]===gSents[idx].a){g.classList.add('filled');g.classList.remove('wrong');ok++;}
+      else g.classList.add('wrong');
+    }
+  });
+  showSB('gscore',ok,gSents.length);
+}
+function resetGaps(){
+  Object.keys(gFilled).forEach(k=>delete gFilled[k]);gapSel=null;
+  document.querySelectorAll('#gtext14 .gap').forEach(g=>{g.textContent='_______';g.classList.remove('filled','wrong');});
+  document.querySelectorAll('#gbank14 .wchip').forEach(c=>{c.classList.remove('used');c.style.outline='';});
+  document.getElementById('gscore').style.display='none';
+}
+
+function initMC25(){
+  const opts=["zuurstof","water","koolstofdioxide","stikstof"];
+  const c=document.getElementById('mc25');
+  const w=document.createElement('div');w.className='mc-v';
+  w.innerHTML='<p class="qt">Koolwaterstof + <strong>?</strong> → koolstofdioxide + water</p>';
+  const btns=document.createElement('div');btns.className='mc-g';
+  const fb=document.createElement('div');fb.className='mfb';
+  opts.forEach((o,oi)=>{
+    const b=document.createElement('button');b.className='mo';b.textContent=o;
+    b.addEventListener('click',()=>{
+      btns.querySelectorAll('button').forEach(x=>x.classList.remove('correct','wrong','grayed'));
+      if(oi===0){b.classList.add('correct');fb.textContent='✓ Zuurstof (O₂) is nodig bij verbranding.';fb.className='mfb ok show';}
+      else{b.classList.add('wrong');btns.querySelectorAll('button')[0].classList.add('correct');fb.textContent='✗ Bij verbranding heb je zuurstof nodig.';fb.className='mfb nee show';}
+      btns.querySelectorAll('button').forEach(x=>x.style.pointerEvents='none');
+    });
+    btns.appendChild(b);
+  });
+  w.appendChild(btns);w.appendChild(fb);c.appendChild(w);
+}
+
+function checkEq(){
+  const vs=[parseInt(document.getElementById('eq1').value),parseInt(document.getElementById('eq2').value),parseInt(document.getElementById('eq3').value)];
+  const ans=[5,3,4];let ok=0;
+  ['eq1','eq2','eq3'].forEach((id,i)=>{
+    const el=document.getElementById(id);el.classList.remove('correct','wrong');
+    if(vs[i]===ans[i]){el.classList.add('correct');ok++;}else el.classList.add('wrong');
+  });
+  const fb=document.getElementById('eqfb');fb.style.display='inline';
+  if(ok===3){fb.style.color='#085041';fb.textContent='✓ Klopt! C₃H₈ + 5O₂ → 3CO₂ + 4H₂O';}
+  else{fb.style.color='#712B13';fb.textContent='✗ Nog niet helemaal. Tel opnieuw.';}
+}
+
+function initMulti(){
+  const opts=["zuurstof","waterstof","water","koolstof (roet)","koolstofdioxide","methanol"];
+  const c=document.getElementById('mc24m');
+  const grid=document.createElement('div');grid.style.cssText='display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:9px;';
+  opts.forEach((o,oi)=>{
+    const b=document.createElement('button');b.className='mo';b.textContent=o;
+    b.addEventListener('click',()=>{
+      if(multiSel.has(oi)){multiSel.delete(oi);b.style.cssText='';}
+      else{multiSel.add(oi);b.style.cssText='background:#E6F1FB;border-color:#378ADD;color:#0C447C;';}
+    });
+    grid.appendChild(b);
+  });
+  c.appendChild(grid);
+}
+function checkMulti(){
+  const ans=new Set([2,3]);
+  const ok=multiSel.size===2&&[...multiSel].every(x=>ans.has(x));
+  const fb=document.getElementById('multifb');fb.style.display='inline';
+  if(ok){fb.style.color='#085041';fb.textContent='✓ Goed! Water (H₂O) en koolstof/roet (C) ✓';}
+  else{fb.style.color='#712B13';fb.textContent='✗ Onvolledige verbranding → water én koolstof (roet).';}
+}
+
+function renderABank(){
+  const bank=document.getElementById('abank');bank.innerHTML='';
+  shuffle([...aF,...aH,...aC]).forEach(w=>{
+    const c=document.createElement('span');c.className='achip';
+    c.dataset.word=w;c.id='ac_'+w.replace(/[^a-z0-9]/gi,'_');c.textContent=w;
+    c.addEventListener('click',()=>{
+      if(c.classList.contains('used'))return;
+      document.querySelectorAll('#abank .achip').forEach(x=>x.classList.remove('selected'));
+      if(selAlkaan===w){selAlkaan=null;return;}
+      selAlkaan=w;c.classList.add('selected');
+    });
+    bank.appendChild(c);
+  });
+}
+function renderATable(){
+  const tb=document.getElementById('atbody');tb.innerHTML='';
+  alkanen.forEach((a,ri)=>{
+    const tr=document.createElement('tr');
+    const ntd=document.createElement('td');ntd.className='nc';ntd.textContent=a.n;tr.appendChild(ntd);
+    [{k:ri+'c',ans:String(a.c)},{k:ri+'f',ans:a.f},{k:ri+'h',ans:String(a.h)}].forEach(f=>{
+      const td=document.createElement('td');
+      const sp=document.createElement('span');sp.className='adrop empty';sp.dataset.key=f.k;sp.dataset.ans=f.ans;sp.textContent='·····';
+      sp.addEventListener('click',()=>{
+        if(!selAlkaan){
+          if(aFilled[f.k]!==undefined){
+            const word=aFilled[f.k];delete aFilled[f.k];
+            sp.textContent='·····';sp.className='adrop empty';
+            const chip=document.getElementById('ac_'+word.replace(/[^a-z0-9]/gi,'_'));
+            if(chip)chip.classList.remove('used');
+          }return;
+        }
+        if(!sp.classList.contains('empty'))return;
+        aFilled[f.k]=selAlkaan;sp.textContent=selAlkaan;sp.className='adrop';
+        const chip=document.getElementById('ac_'+selAlkaan.replace(/[^a-z0-9]/gi,'_'));
+        if(chip){chip.classList.add('used');chip.classList.remove('selected');}
+        selAlkaan=null;
+      });
+      td.appendChild(sp);tr.appendChild(td);
+    });
+    tb.appendChild(tr);
+  });
+}
+function checkAlkanen(){
+  let ok=0,tot=alkanen.length*3;
+  document.querySelectorAll('#atbody .adrop:not(.empty)').forEach(d=>{
+    d.classList.remove('correct','wrong');
+    if(aFilled[d.dataset.key]===d.dataset.ans){d.classList.add('correct');ok++;}
+    else d.classList.add('wrong');
+  });
+  showSB('ascore',ok,tot);
+}
+function resetAlkanen(){
+  Object.keys(aFilled).forEach(k=>delete aFilled[k]);selAlkaan=null;
+  renderABank();renderATable();
+  document.getElementById('ascore').style.display='none';
+}
+
+initMatch();initMC13();initMCBlok();initGaps();initMC25();initMulti();
+renderABank();renderATable();
+</script>
+</body>
+</html>
