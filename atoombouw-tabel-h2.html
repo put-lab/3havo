@@ -1,1 +1,204 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Atoombouw &amp; deeltjes – oefenen</title>
+<style>
+:root{--bg:#f6f8f7;--card:#fff;--ink:#1d2b2a;--mute:#5c6b69;--line:#d5dedc;--acc:#0f766e;--ok:#166534;--okbg:#dcfce7;--bad:#991b1b;--badbg:#fee2e2}
+@media (prefers-color-scheme:dark){:root{--bg:#121a19;--card:#1a2524;--ink:#e6efed;--mute:#9bb0ac;--line:#2f403e;--acc:#5eead4;--ok:#86efac;--okbg:#14301f;--bad:#fca5a5;--badbg:#3a1a1a}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 Arial,Helvetica,sans-serif}
+main{max-width:700px;margin:0 auto;padding:24px 16px 48px}
+h1{font-size:1.7rem;margin:0 0 4px}
+p.sub{margin:0 0 20px;color:var(--mute)}
+.card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:20px;margin-bottom:16px}
+.table-wrap{overflow-x:auto;margin:12px 0}
+table{border-collapse:collapse;width:100%;min-width:480px}
+th,td{border:1px solid var(--line);padding:8px 10px;text-align:center}
+th{text-align:left;background:var(--bg);font-weight:bold;width:185px}
+td.given{font-weight:bold;font-size:1.05rem}
+input{width:100%;min-width:64px;font:inherit;text-align:center;padding:6px 4px;border:1px solid var(--line);border-radius:6px;background:var(--bg);color:var(--ink)}
+input:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+input.ok{border-color:var(--ok);background:var(--okbg);color:var(--ok);font-weight:bold}
+input.bad{border-color:var(--bad);background:var(--badbg);color:var(--bad);font-weight:bold}
+.fix{display:block;font-size:.82rem;color:var(--ok);font-weight:bold;margin-top:3px}
+.actions{margin-top:16px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button{font:inherit;font-weight:bold;padding:10px 18px;border:0;border-radius:8px;background:var(--acc);color:#fff;cursor:pointer}
+@media (prefers-color-scheme:dark){button{color:#0b1b19}}
+button.ghost{background:transparent;color:var(--acc);border:1px solid var(--acc)}
+.fb{margin-top:14px;padding:10px 12px;border-radius:8px;font-weight:bold}
+.fb.ok{background:var(--okbg);color:var(--ok)}
+.fb.bad{background:var(--badbg);color:var(--bad)}
+.hidden{display:none}
+details{margin-top:14px}
+summary{cursor:pointer;font-weight:bold;color:var(--acc)}
+.hint{color:var(--mute);font-size:.92rem;margin:8px 0 0;padding-left:18px}
+.hint li{margin-bottom:4px}
+.top-bar{display:flex;justify-content:space-between;align-items:center;color:var(--mute);font-size:.95rem;margin-bottom:6px}
+</style>
+</head>
+<body>
+<main>
+<h1>Atoombouw &amp; deeltjes</h1>
+<p class="sub">Vul de lege vakjes in de tabel aan voor neutrale atomen (gebruik je periodiek systeem).</p>
 
+<section class="card">
+  <div class="top-bar">
+    <span id="round">Tabel 1</span>
+    <span id="streak"></span>
+  </div>
+  <div class="table-wrap">
+    <table id="grid"></table>
+  </div>
+  <div id="fb" class="fb hidden" role="status"></div>
+  <div class="actions">
+    <button id="check">Controleer antwoorden</button>
+    <button id="next" class="ghost">Nieuwe tabel</button>
+  </div>
+  <details>
+    <summary>Hulp &amp; rekenregels</summary>
+    <ul class="hint">
+      <li><strong>Atoomnummer</strong> = aantal protonen.</li>
+      <li>In een neutraal atoom geldt: <strong>aantal elektronen</strong> = aantal protonen.</li>
+      <li><strong>Massagetal</strong> = aantal protonen + aantal neutronen.</li>
+      <li>Let bij het atoomsymbool op hoofdletters en kleine letters (bijv. <strong>Na</strong>, <strong>Cl</strong>, <strong>S</strong>).</li>
+    </ul>
+  </details>
+</section>
+</main>
+
+<script>
+(function(){
+var ATOMS=[
+  {sym:"H",z:1,m:1},{sym:"He",z:2,m:4},{sym:"Li",z:3,m:7},{sym:"Be",z:4,m:9},
+  {sym:"B",z:5,m:11},{sym:"C",z:6,m:12},{sym:"N",z:7,m:14},{sym:"O",z:8,m:16},
+  {sym:"F",z:9,m:19},{sym:"Ne",z:10,m:20},{sym:"Na",z:11,m:23},{sym:"Mg",z:12,m:24},
+  {sym:"Al",z:13,m:27},{sym:"Si",z:14,m:28},{sym:"P",z:15,m:31},{sym:"S",z:16,m:32},
+  {sym:"Cl",z:17,m:35},{sym:"Ar",z:18,m:40},{sym:"K",z:19,m:39},{sym:"Ca",z:20,m:40},
+  {sym:"Fe",z:26,m:56},{sym:"Cu",z:29,m:64},{sym:"Zn",z:30,m:64},{sym:"Br",z:35,m:80},
+  {sym:"Ag",z:47,m:108},{sym:"I",z:53,m:127},{sym:"Au",z:79,m:197},{sym:"Pb",z:82,m:207}
+];
+
+var ROWS=[
+  {key:"sym",label:"atoom"},
+  {key:"m",label:"massagetal"},
+  {key:"z",label:"atoomnummer"},
+  {key:"p",label:"aantal protonen"},
+  {key:"n",label:"aantal neutronen"},
+  {key:"e",label:"aantal elektronen"}
+];
+
+// Geldige combinaties van 2 gegeven rijen waarmee de hele kolom eenduidig is op te lossen:
+// (1 waarde bepaalt Z/sym/p/e, en 1 waarde bepaalt M of N)
+var PATTERNS=[
+  ["sym","n"], // zoals kolom 1 in het boek (S, n=16)
+  ["m","z"],   // zoals kolom 2 in het boek (m=64, z=30)
+  ["m","e"],   // zoals kolom 3 in het boek (m=40, e=18)
+  ["p","n"],   // zoals kolom 4 in het boek (p=13, n=14)
+  ["sym","m"],
+  ["z","n"],
+  ["m","p"],
+  ["e","n"]
+];
+
+var round=0,solved=0,cols=[];
+var $=function(id){return document.getElementById(id)};
+
+function shuffle(a){
+  for(var i=a.length-1;i>0;i--){
+    var j=Math.floor(Math.random()*(i+1));
+    var t=a[i];a[i]=a[j];a[j]=t;
+  }
+  return a;
+}
+
+function build(){
+  round++;
+  $("round").textContent="Tabel "+round;
+  $("streak").textContent=solved?"Volledig goed: "+solved:"";
+  $("fb").className="fb hidden";
+
+  // Kies 4 verschillende atomen en 4 verschillende patronen
+  var chosen=shuffle(ATOMS.slice()).slice(0,4);
+  var pats=shuffle(PATTERNS.slice()).slice(0,4);
+
+  cols=chosen.map(function(a,idx){
+    return {
+      sym:a.sym,
+      m:String(a.m),
+      z:String(a.z),
+      p:String(a.z),
+      n:String(a.m-a.z),
+      e:String(a.z),
+      given:pats[idx]
+    };
+  });
+
+  var html="";
+  ROWS.forEach(function(r){
+    html+="<tr><th>"+r.label+"</th>";
+    cols.forEach(function(c,ci){
+      if(c.given.indexOf(r.key)!==-1){
+        html+='<td class="given">'+c[r.key]+"</td>";
+      }else{
+        var isText=r.key==="sym";
+        html+='<td><input type="text" data-c="'+ci+'" data-k="'+r.key+'"'+(isText?'':' inputmode="numeric"')+' autocomplete="off" autocapitalize="off" spellcheck="false"></td>';
+      }
+    });
+    html+="</tr>";
+  });
+
+  $("grid").innerHTML=html;
+  var first=$("grid").querySelector("input");
+  if(first)first.focus();
+}
+
+function check(){
+  var inputs=$("grid").querySelectorAll("input");
+  var total=inputs.length,good=0;
+
+  // Verwijder eventuele eerdere correcties
+  $("grid").querySelectorAll(".fix").forEach(function(el){el.remove()});
+
+  inputs.forEach(function(inp){
+    var ci=+inp.dataset.c,k=inp.dataset.k;
+    var expected=cols[ci][k];
+    var val=inp.value.trim();
+
+    inp.classList.remove("ok","bad");
+    if(val===expected){
+      inp.classList.add("ok");
+      good++;
+    }else{
+      inp.classList.add("bad");
+      var hint=document.createElement("span");
+      hint.className="fix";
+      hint.textContent=expected;
+      inp.parentNode.appendChild(hint);
+    }
+  });
+
+  var fb=$("fb");
+  if(good===total){
+    solved++;
+    $("streak").textContent="Volledig goed: "+solved;
+    fb.className="fb ok";
+    fb.textContent="Helemaal goed! Alle "+total+" vakjes kloppen.";
+  }else{
+    fb.className="fb bad";
+    fb.textContent="Je hebt "+good+" van de "+total+" vakjes goed. De juiste antwoorden staan in het groen onder de foute vakjes.";
+  }
+}
+
+$("check").onclick=check;
+$("next").onclick=build;
+$("grid").addEventListener("keydown",function(e){
+  if(e.key==="Enter"){e.preventDefault();check()}
+});
+
+build();
+})();
+</script>
+</body>
+</html>
